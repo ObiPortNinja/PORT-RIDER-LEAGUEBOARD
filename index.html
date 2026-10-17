@@ -166,6 +166,10 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 .rl-badge { display: inline-block; line-height: 0; }
 .rl-badge svg { width: 30px; height: 30px; display: block; }
 .rl-badge.lg svg { width: 52px; height: 52px; }
+.rl-badge { cursor: pointer; border-radius: 50%; -webkit-tap-highlight-color: transparent; }
+.rl-badge:focus-visible { outline: 2px solid #3b6fd8; outline-offset: 2px; }
+.rl-badgetip { position: fixed; z-index: 50; max-width: min(280px, calc(100vw - 24px)); background: #1c1b19; color: #fff; font: 13px/1.35 var(--font-anthropic-sans); padding: 8px 10px; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.25); pointer-events: none; }
+.rl-badgetip[hidden] { display: none; }
 .rl-legend-badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: var(--cds-gap-md); }
 .rl-legend-badges > div { display: flex; gap: var(--cds-gap-sm); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
 .rl-legend-badges b { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); display: block; font-size: var(--cds-font-size-body); }
@@ -292,7 +296,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 
   <section class="rl-sec" id="riders">
     <h2>Every rider</h2>
-    <p class="rl-note">Level, badges and what's needed for the next level. Hover or tap a badge to see what it's for.</p>
+    <p class="rl-note">Level, badges and what's needed for the next level. Tap a badge to see what it's for.</p>
     <input class="rl-search" id="rl-search" type="search" placeholder="Search a name" aria-label="Search riders">
     <div class="rl-card rl-scroll">
       <table id="all" data-source="league" data-row-key="key">
@@ -424,9 +428,8 @@ function shapePath(shape) {
 function badgeEl(code, large) {
   const [type, raw] = code.split(':'); const n = raw ? +raw : null; const B = BADGE[type]; if (!B) return null;
   const tier = tierOf(type, n); const name = B.name(n);
-  const wrap = el('span', `rl-badge${large ? ' lg' : ''}`); wrap.title = `${name} · ${B.desc}`;
+  const wrap = el('span', `rl-badge${large ? ' lg' : ''}`); wrap.dataset.tip = `${name} · ${B.desc}`; wrap.tabIndex = 0; wrap.setAttribute('role', 'button'); wrap.setAttribute('aria-label', `${name}: ${B.desc}`);
   const svg = sv('svg', { viewBox: '0 0 64 64', role: 'img', 'aria-label': name });
-  sv('title', {}, svg).textContent = name;
   const g = sv('g', {}, svg);
   const medal = B.shape === 'medal';
   if (medal) { sv('path', { d: 'M20 2 L29 20 L23 23 L14 5 Z', fill: '#c0392b' }, g); sv('path', { d: 'M44 2 L35 20 L41 23 L50 5 Z', fill: '#2c5aa0' }, g); }
@@ -444,6 +447,23 @@ function badgeEl(code, large) {
   if (B.iconOnly && n != null) { sv('circle', { cx: 51, cy: 52, r: 10, fill: '#1c1b19' }, g); const t = sv('text', { x: 51, y: 56, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: '#fff', 'font-family': 'system-ui, sans-serif' }, g); t.textContent = String(n); }
   wrap.append(svg); return wrap;
 }
+(() => {
+  const tip = document.createElement('div'); tip.className = 'rl-badgetip'; tip.hidden = true; tip.setAttribute('role', 'tooltip'); document.body.append(tip);
+  let cur = null;
+  const hide = () => { tip.hidden = true; cur = null; };
+  const show = (b) => {
+    cur = b; tip.textContent = b.dataset.tip; tip.hidden = false;
+    const r = b.getBoundingClientRect(); const w = tip.offsetWidth, h = tip.offsetHeight;
+    let x = r.left + r.width / 2 - w / 2; x = Math.max(12, Math.min(x, innerWidth - w - 12));
+    let y = r.top - h - 8; if (y < 8) y = r.bottom + 8;
+    tip.style.left = `${x}px`; tip.style.top = `${y}px`;
+  };
+  document.addEventListener('click', (e) => { const b = e.target.closest && e.target.closest('.rl-badge[data-tip]'); if (b) { if (cur === b) hide(); else show(b); } else hide(); });
+  document.addEventListener('keydown', (e) => { const b = e.target.closest && e.target.closest('.rl-badge[data-tip]'); if (b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); show(b); } if (e.key === 'Escape') hide(); });
+  document.addEventListener('mouseover', (e) => { if (!matchMedia('(hover: hover)').matches) return; const b = e.target.closest && e.target.closest('.rl-badge[data-tip]'); if (b) show(b); });
+  document.addEventListener('mouseout', (e) => { if (!matchMedia('(hover: hover)').matches) return; const b = e.target.closest && e.target.closest('.rl-badge[data-tip]'); if (b && !b.contains(e.relatedTarget)) hide(); });
+  addEventListener('scroll', hide, { passive: true, capture: true }); addEventListener('resize', hide);
+})();
 const badgeRow = (codes) => { const box = el('div', 'rl-badges'); String(codes || '').split('|').filter(Boolean).map((c) => badgeEl(c)).filter(Boolean).forEach((b) => box.append(b)); return box; };
 
 /* ---------- interactions ---------- */
