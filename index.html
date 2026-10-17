@@ -185,6 +185,44 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 .rl-rules ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; }
 .rl-pts-table { max-width: 22rem; }
 .rl-pts-table td { padding: 3px var(--cds-pad-sm); }
+.rl { --lv1: #3d8a57; --lv2: #86a23a; --lv3: #c9921c; --lv4: #d0642a; --lv5: #b3302e; }
+.rl-dg { display: grid; gap: var(--cds-gap-sm); }
+.rl-floor { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: var(--cds-gap-md); align-items: start; padding: var(--cds-pad-md); border-radius: var(--cds-radius); background: var(--color-panel); border: 1px solid var(--color-border-line); border-left: 5px solid var(--lvc); }
+.rl-floor .fl-h { display: grid; gap: 2px; }
+.rl-floor .fl-n { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 8px; background: var(--lvc); color: #fff; font-weight: 700; }
+.rl-floor .fl-name { font-weight: var(--cds-font-weight-medium); }
+.rl-floor .fl-range { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rl-floor .fl-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 11.5rem), 1fr)); gap: var(--cds-gap-sm); }
+.rl-floor .fl-empty { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); align-self: center; }
+.rl-tc { border: 1px solid var(--color-border-line); border-top: 3px solid var(--lvc); border-radius: 8px; padding: 8px 10px; background: var(--color-bg); display: grid; gap: 4px; align-content: start; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.rl-tc:focus-visible, .rl-mchip:focus-visible, .rl-tag:focus-visible { outline: 2px solid #3b6fd8; outline-offset: 2px; }
+.rl-tc .tc-top { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.rl-tc .tc-code { font-size: 1.05rem; font-weight: 700; }
+.rl-tc .tc-score { font-weight: 700; color: var(--lvc); }
+.rl-tc .tc-area { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rl-tc .tc-stats { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: var(--cds-font-size-caption); }
+.rl-tc .tc-stats b { font-weight: var(--cds-font-weight-medium); }
+.rl-tc .tc-who { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rl-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.rl-tag { font-size: 11px; line-height: 1; padding: 4px 6px; border-radius: 999px; border: 1px dashed var(--color-fg-muted); color: var(--color-fg); }
+.rl-tag.terrain { border-color: var(--lv5); color: var(--lv5); }
+.rl-fog { display: grid; gap: var(--cds-gap-sm); }
+.rl-fog h3, .rl-dgx h3 { margin: 0; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); }
+.rl-fog .fog-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.rl-fog .fog-list span { font-size: var(--cds-font-size-caption); padding: 4px 8px; border-radius: 999px; background: repeating-linear-gradient(135deg, rgba(0,0,0,.05) 0 6px, rgba(0,0,0,.09) 6px 12px); color: var(--color-fg-muted); }
+.rl-fog .fog-list b { color: var(--color-fg); }
+.rl-dgx { display: grid; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-body); }
+.rl-dgx p { margin: 0; }
+.rl-side { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 11.5rem), 1fr)); gap: var(--cds-gap-sm); --lvc: #3b6fd8; }
+.rl-mrow { display: flex; flex-wrap: wrap; gap: 4px; }
+.rl-mchip { font-size: 11px; line-height: 1; padding: 4px 6px; border-radius: 6px; border: 1px solid transparent; white-space: nowrap; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.rl-mchip.m-Scout { background: rgba(0,0,0,.05); color: var(--color-fg-muted); }
+.rl-mchip.m-Local { background: #e6eefc; color: #234b9c; }
+.rl-mchip.m-Veteran { background: #fbe9d2; color: #7a4310; }
+.rl-mchip.m-Master { background: #1c1b19; color: #ffe27a; }
+#all { min-width: 44rem; } #all .rl-badges { min-width: 10rem; } #all .rl-mrow { min-width: 8rem; }
+.rl-mkey { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+@media (max-width: 640px) { .rl-floor { grid-template-columns: 1fr; } .rl-floor .fl-h { grid-template-columns: auto 1fr; column-gap: 8px; align-items: center; } .rl-floor .fl-n { grid-row: span 2; } }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 .rl-fail { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: 6rem; }
@@ -238,6 +276,29 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     </div>
   </section>
 
+  <section class="rl-sec" id="dungeons">
+    <h2>Tour Dungeons</h2>
+    <p class="rl-note">How hard each doorstep tour is, from the last 8 weeks of shifts on that tour: failed deliveries, on-time window (EDW) and minutes per parcel, each compared with the other tours, plus a terrain bonus for things the numbers miss. A tour needs 8 shifts to get a level. Tap a tour for its details.</p>
+    <div class="rl-dg" id="dungeon" data-source="league"></div>
+  </section>
+
+  <section class="rl-sec rl-grid2" id="dungeon-more">
+    <div class="rl-card rl-fog" id="fog" data-source="league"></div>
+    <div class="rl-card rl-dgx">
+      <h3>Tour mastery</h3>
+      <p>Every tour you ride builds your mastery of it. Shadow shifts count as half. A combined tour counts for its main tour.</p>
+      <div class="rl-mkey"><span class="rl-mchip m-Scout">Scout</span>1–2 shifts <span class="rl-mchip m-Local">Local</span>3–9 <span class="rl-mchip m-Veteran">Veteran</span>10–24 <span class="rl-mchip m-Master">Master</span>25+</div>
+      <p>★ Veterans and Masters whose last 5 shifts on a tour beat that tour's average (failed deliveries and, on doorstep, EDW).</p>
+      <p id="dungeon-points"></p>
+    </div>
+  </section>
+
+  <section class="rl-sec" id="sidequests-sec">
+    <h2>Side quests · Lockers (OOH)</h2>
+    <p class="rl-note">Lockers tours are a different job, so they aren't given dungeon levels. Last 8 weeks.</p>
+    <div class="rl-side" id="sidequests" data-source="league"></div>
+  </section>
+
   <section class="rl-sec" id="levels">
     <h2>Levels</h2>
     <p class="rl-note">Your level comes from all the tours you've done for PORT and your rating since July, and it's the same in both divisions. Doorstep rating = 40% on-time window (EDW) + 40% delivery success + 20% photo compliance; lockers rating = delivery success.</p>
@@ -282,6 +343,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
         </tbody></table>
         <ul>
           <li><b>Perfect shift:</b> a solo shift with 50+ parcels taken out, or a lead (training) shift with 40+, and 98%+ delivered. On doorstep shifts you also need 95%+ inside InPost's delivery window (EDW). Shifts still waiting for their scores don't count yet, and don't break a streak.</li>
+          <li><b>Tour Dungeons:</b> harder tours (Level 2 to Boss Tour) will earn bonus points for beating the tour's average, starting with a 2-week preview. See Tour Dungeons above.</li>
           <li><b>Diamond Deliverer:</b> #1 in your division 3 weeks in a row (Monday to Sunday points, at least 2 shifts that week), or 10 perfect shifts in a row.</li>
         </ul>
       </div>
@@ -296,11 +358,11 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 
   <section class="rl-sec" id="riders">
     <h2>Every rider</h2>
-    <p class="rl-note">Level, badges and what's needed for the next level. Tap a badge to see what it's for.</p>
+    <p class="rl-note">Level, badges, the tours you know best and what's needed for the next level. Tap a badge or tour to see what it's for.</p>
     <input class="rl-search" id="rl-search" type="search" placeholder="Search a name" aria-label="Search riders">
     <div class="rl-card rl-scroll">
       <table id="all" data-source="league" data-row-key="key">
-        <thead><tr><th data-field="rider">Rider</th><th data-field="level">Level</th><th class="hide-sm" data-field="pathway">Main division</th><th class="n" data-field="tours">Tours</th><th class="n hide-sm" data-field="days">Days</th><th class="n" data-field="rating_all">Rating</th><th data-field="badge_codes">Badges</th><th data-field="next_goal">Next level needs</th></tr></thead>
+        <thead><tr><th data-field="rider">Rider</th><th data-field="level">Level</th><th class="hide-sm" data-field="pathway">Main division</th><th class="n" data-field="tours">Tours</th><th class="n hide-sm" data-field="days">Days</th><th class="n" data-field="rating_all">Rating</th><th data-field="badge_codes">Badges</th><th data-field="mastery">Tour mastery</th><th data-field="next_goal">Next level needs</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -368,7 +430,7 @@ const NULLABLE = ['d_edw_28d', 'd_success_28d', 'd_image_28d', 'd_collected_28d'
 const rows = () => {
   const d = dash.data('league');
   if (d.status !== 'ok') return [];
-  return d.data.map((r) => {
+  return d.data.filter((r) => r.kind !== 'tour').map((r) => {
     const o = { ...r, primary: truthy(r.primary), diamond: truthy(r.diamond) };
     NUMS.forEach((k) => { o[k] = +r[k] || 0; });
     NULLABLE.forEach((k) => { o[k] = r[k] == null || r[k] === '' ? null : +r[k]; });
@@ -391,6 +453,7 @@ const TIERS = {
   champion: [[5, 'diamond'], [3, 'platinum'], [1, 'gold']],
   streak: [[12, 'gold'], [8, 'silver'], [4, 'bronze']],
   trainer: [[50, 'diamond'], [25, 'platinum'], [10, 'gold'], [5, 'silver'], [1, 'bronze']],
+  explorer: [[20, 'platinum'], [15, 'gold'], [10, 'silver']],
 };
 const BADGE = {
   tours: { shape: 'medal', name: (n) => `${n} tours`, desc: 'PORT tours completed' },
@@ -405,6 +468,11 @@ const BADGE = {
   window: { shape: 'target', name: () => 'Window master', desc: '95%+ on-time window (EDW), 5+ doorstep shifts', tier: 'platinum' },
   photo: { shape: 'camera', name: () => 'Photo pro', desc: '98%+ photo compliance, 5+ doorstep shifts', tier: 'silver' },
   diamond: { shape: 'gem', name: () => 'Diamond Deliverer', desc: '#1 three weeks running, or 10 perfect shifts in a row', tier: 'diamond' },
+  dungeonmaster: { shape: 'gate', name: () => 'Dungeon Master', desc: 'Veteran or Master of a Level 4 or 5 tour', tier: 'gold' },
+  bossslayer: { shape: 'sword', name: () => 'Boss Slayer', desc: 'Beat a Boss Tour\'s average in the last 28 days', tier: 'platinum' },
+  hometurf: { shape: 'house', name: () => 'Home Turf', desc: 'Master of a tour (25+ shifts on it)', tier: 'gold' },
+  explorer: { shape: 'compass', name: (n) => `Explorer: ${n}+ tours`, desc: 'Different tours ridden solo or leading', iconOnly: true },
+  architect: { shape: 'dividers', name: () => 'Dungeon Architect', desc: 'Came up with the Tour Dungeons idea', tier: 'diamond' },
 };
 const tierOf = (type, n) => { const B = BADGE[type]; if (B.tier) return B.tier; const t = (TIERS[type] || []).find(([min]) => n >= min); return t ? t[1] : 'bronze'; };
 const INK = { stroke: '#1c1b19', 'stroke-opacity': '.75' };
@@ -416,6 +484,11 @@ const ICON = {
   trainer: (g) => { sv('circle', { cx: 26, cy: 27, r: 5, fill: '#1c1b19', 'fill-opacity': '.75' }, g); sv('path', { d: 'M17 43c0-6 4-10 9-10s9 4 9 10z', fill: '#1c1b19', 'fill-opacity': '.75' }, g); sv('circle', { cx: 40, cy: 30, r: 4, fill: '#1c1b19', 'fill-opacity': '.5' }, g); sv('path', { d: 'M33 43c0-5 3-8 7-8s7 3 7 8z', fill: '#1c1b19', 'fill-opacity': '.5' }, g); },
   crown: (g) => { sv('path', { d: 'M20 41 L22 26 L28 32 L32 23 L36 32 L42 26 L44 41 Z', fill: '#1c1b19', 'fill-opacity': '.72' }, g); },
   flame: (g) => { sv('path', { d: 'M32 21c2 5 8 8 8 14a8 8 0 0 1-16 0c0-4 3-6 4-9 1 3 2 4 4 4-1-4-1-6 0-9z', fill: '#1c1b19', 'fill-opacity': '.72' }, g); },
+  gate: (g) => { sv('path', { d: 'M22 45 V32 a10 10 0 0 1 20 0 V45 Z', fill: '#1c1b19', 'fill-opacity': '.72' }, g); sv('path', { d: 'M27 45 V33 M32 45 V30 M37 45 V33', stroke: '#fff', 'stroke-opacity': '.55', 'stroke-width': 1.6 }, g); },
+  sword: (g) => { sv('path', { d: 'M41 20 L44 23 L28 39 L25 36 Z', fill: '#1c1b19', 'fill-opacity': '.75' }, g); sv('path', { d: 'M22 35 L30 43', ...INK, 'stroke-width': 3, 'stroke-linecap': 'round' }, g); sv('path', { d: 'M24 41 L20 45', ...INK, 'stroke-width': 3.2, 'stroke-linecap': 'round' }, g); },
+  house: (g) => { sv('path', { d: 'M19 33 L32 21 L45 33 V45 H19 Z', fill: '#1c1b19', 'fill-opacity': '.72' }, g); sv('rect', { x: 29, y: 36, width: 6, height: 9, fill: '#fff', 'fill-opacity': '.6' }, g); },
+  compass: (g) => { sv('circle', { cx: 32, cy: 33, r: 12, fill: 'none', ...INK, 'stroke-width': 2.4 }, g); sv('path', { d: 'M32 23 L35.5 33 L32 43 L28.5 33 Z', fill: '#1c1b19', 'fill-opacity': '.75' }, g); },
+  dividers: (g) => { sv('path', { d: 'M32 22 L24 45 M32 22 L40 45', ...INK, 'stroke-width': 2.6, 'stroke-linecap': 'round' }, g); sv('circle', { cx: 32, cy: 21, r: 3.2, fill: '#1c1b19', 'fill-opacity': '.75' }, g); sv('path', { d: 'M25 39 Q32 43 39 39', fill: 'none', ...INK, 'stroke-width': 2 }, g); },
   gem: (g) => { sv('path', { d: 'M14 24 H50 M22 10 L28 24 L32 10 L36 24 L42 10 M28 24 L32 58 L36 24', fill: 'none', stroke: 'rgba(0,40,70,.4)', 'stroke-width': 1.3 }, g); },
 };
 function shapePath(shape) {
@@ -458,10 +531,10 @@ function badgeEl(code, large) {
     let y = r.top - h - 8; if (y < 8) y = r.bottom + 8;
     tip.style.left = `${x}px`; tip.style.top = `${y}px`;
   };
-  document.addEventListener('click', (e) => { const b = e.target.closest && e.target.closest('.rl-badge[data-tip]'); if (b) { if (cur === b) hide(); else show(b); } else hide(); });
-  document.addEventListener('keydown', (e) => { const b = e.target.closest && e.target.closest('.rl-badge[data-tip]'); if (b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); show(b); } if (e.key === 'Escape') hide(); });
-  document.addEventListener('mouseover', (e) => { if (!matchMedia('(hover: hover)').matches) return; const b = e.target.closest && e.target.closest('.rl-badge[data-tip]'); if (b) show(b); });
-  document.addEventListener('mouseout', (e) => { if (!matchMedia('(hover: hover)').matches) return; const b = e.target.closest && e.target.closest('.rl-badge[data-tip]'); if (b && !b.contains(e.relatedTarget)) hide(); });
+  document.addEventListener('click', (e) => { const b = e.target.closest && e.target.closest('.rl-badge[data-tip], .rl-tipable[data-tip]'); if (b) { if (cur === b) hide(); else show(b); } else hide(); });
+  document.addEventListener('keydown', (e) => { const b = e.target.closest && e.target.closest('.rl-badge[data-tip], .rl-tipable[data-tip]'); if (b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); show(b); } if (e.key === 'Escape') hide(); });
+  document.addEventListener('mouseover', (e) => { if (!matchMedia('(hover: hover)').matches) return; const b = e.target.closest && e.target.closest('.rl-badge[data-tip], .rl-tipable[data-tip]'); if (b) show(b); });
+  document.addEventListener('mouseout', (e) => { if (!matchMedia('(hover: hover)').matches) return; const b = e.target.closest && e.target.closest('.rl-badge[data-tip], .rl-tipable[data-tip]'); if (b && !b.contains(e.relatedTarget)) hide(); });
   addEventListener('scroll', hide, { passive: true, capture: true }); addEventListener('resize', hide);
 })();
 const badgeRow = (codes) => { const box = el('div', 'rl-badges'); String(codes || '').split('|').filter(Boolean).map((c) => badgeEl(c)).filter(Boolean).forEach((b) => box.append(b)); return box; };
@@ -607,6 +680,11 @@ function drawBadgeLegend() {
     ['window', 'Window master', '95%+ on-time window (EDW)'],
     ['photo', 'Photo pro', '98%+ photo compliance'],
     ['diamond', 'Diamond Deliverer', '#1 three weeks running, or 10 perfect shifts in a row'],
+    ['dungeonmaster', 'Dungeon Master', 'Veteran or Master of a Level 4 or 5 tour'],
+    ['bossslayer', 'Boss Slayer', 'Beat a Boss Tour\'s average on a shift in the last 28 days'],
+    ['hometurf', 'Home Turf', 'Master of a tour: 25+ shifts on it'],
+    ['explorer:10', 'Explorer', '10 · 15 · 20 different tours ridden'],
+    ['architect', 'Dungeon Architect', 'One of a kind: for the rider who came up with the Tour Dungeons'],
   ];
   box.replaceChildren(...items.map(([code, title, text]) => { const r = el('div'); const t = el('span'); t.append(el('b', null, title), document.createTextNode(text)); r.append(badgeEl(code, true), t); return r; }));
 }
@@ -643,6 +721,64 @@ function drawArrival() {
   box.replaceChildren(svg.node(), tip);
 }
 
+/* ---------- Tour Dungeons ---------- */
+const FLOOR_NAMES = { 5: 'Boss Tour', 4: 'Danger Zone', 3: 'The Maze', 2: 'Side Streets', 1: 'Training Grounds' };
+const FLOOR_RANGE = { 5: '80–100', 4: '60–79', 3: '40–59', 2: '20–39', 1: '0–19' };
+const tourRows = () => { const d = dash.data('league'); return d.status === 'ok' ? d.data.filter((r) => r.kind === 'tour') : []; };
+const pct1 = (v) => v == null || v === '' ? '–' : `${(+v * 100).toFixed(1)}%`;
+const tipable = (node, text) => { node.classList.add('rl-tipable'); node.dataset.tip = text; node.tabIndex = 0; node.setAttribute('role', 'button'); node.setAttribute('aria-label', text); return node; };
+function masteryRow(str, max) {
+  const box = el('div', 'rl-mrow'); const items = String(str || '').split('|').filter(Boolean).map((s) => { const [t, rank, n, star] = s.split(':'); return { t, rank, n: +n, star: star === '1' }; });
+  items.slice(0, max || items.length).forEach((m) => box.append(tipable(el('span', `rl-mchip m-${m.rank}`, `${m.t}${m.star ? ' ★' : ''}`), `${m.t} · ${m.rank} · ${m.n % 1 ? m.n.toFixed(1) : m.n} shift${m.n === 1 ? '' : 's'}${m.star ? ' · beating the tour average' : ''}`)));
+  if (max && items.length > max) box.append(tipable(el('span', 'rl-mchip m-Scout', `+${items.length - max}`), items.slice(max).map((m) => `${m.t} ${m.rank}`).join(', ')));
+  return box;
+}
+function whoLine(t) {
+  const ms = String(t.masters || '').split('|').filter(Boolean).map((s) => { const [n, r, st] = s.split('~'); return `${n}${st === '1' ? '★' : ''}`; });
+  return ms.length ? `Veterans & Masters: ${ms.join(', ')}` : 'No Veterans yet: claim it';
+}
+function tourCard(t, lvc) {
+  const c = el('div', 'rl-tc'); c.style.setProperty('--lvc', lvc);
+  const top = el('div', 'tc-top'); top.append(el('span', 'tc-code', t.tour), el('span', 'tc-score', t.status === 'ranked' ? String(t.score) : ''));
+  const st = el('div', 'tc-stats');
+  const add = (label, v) => { const s = el('span'); s.append(el('b', null, v), document.createTextNode(` ${label}`)); st.append(s); };
+  add('failed', pct1(t.fail)); if (t.type === 'D2D') add('EDW', pct1(t.edw)); add('min/parcel', t.mpp == null ? '–' : (+t.mpp).toFixed(1));
+  if (t.type === 'OOH') add('parcels/shift', t.parcels == null ? '–' : String(t.parcels));
+  const tags = el('div', 'rl-tags');
+  if (+t.terrain > 0) tags.append(tipable(el('span', 'rl-tag terrain', `+${t.terrain} terrain`), `Terrain bonus +${t.terrain}: ${t.terrain_why}`));
+  if (truthy(t.shifting)) tags.append(tipable(el('span', 'rl-tag', 'Shifting dungeon'), 'Overflow tour: the area changes from day to day'));
+  c.append(top, el('div', 'tc-area', t.area || ''), st);
+  if (tags.childNodes.length) c.append(tags);
+  c.append(el('div', 'tc-who', whoLine(t)));
+  const lvl = t.status === 'ranked' ? `Level ${t.level} ${t.level_name} · score ${t.score}${+t.terrain > 0 ? ` (${t.data_score} from the numbers + ${t.terrain} terrain)` : ''}` : 'Lockers side quest';
+  return tipable(c, `${t.tour} · ${lvl} · ${t.shifts} shifts by ${t.riders} rider${+t.riders === 1 ? '' : 's'} in the last 8 weeks · ${t.parcels ?? '–'} parcels a shift`);
+}
+function drawDungeons() {
+  const box = document.getElementById('dungeon'); const fog = document.getElementById('fog'); const side = document.getElementById('sidequests');
+  const d = dash.data('league'); if (d.status !== 'ok') { fail(box, d.status); fog.replaceChildren(); side.replaceChildren(); return; }
+  const T = tourRows(); const ranked = T.filter((t) => t.status === 'ranked');
+  box.replaceChildren(...[5, 4, 3, 2, 1].map((lv) => {
+    const f = el('div', 'rl-floor'); const lvc = `var(--lv${lv})`; f.style.setProperty('--lvc', lvc);
+    const h = el('div', 'fl-h'); h.append(el('span', 'fl-n', String(lv)), el('span', 'fl-name', FLOOR_NAMES[lv]), el('span', 'fl-range', `Score ${FLOOR_RANGE[lv]}`));
+    const cards = el('div', 'fl-cards'); const here = ranked.filter((t) => +t.level === lv).sort((a, b) => b.score - a.score);
+    if (here.length) here.forEach((t) => cards.append(tourCard(t, lvc))); else cards.append(el('div', 'fl-empty', 'No tours on this floor right now.'));
+    f.append(h, cards); return f;
+  }));
+  const fogged = T.filter((t) => t.status === 'fog').sort((a, b) => a.to_reveal - b.to_reveal || a.tour.localeCompare(b.tour));
+  const list = el('div', 'fog-list'); fogged.forEach((t) => { const s = el('span'); s.append(el('b', null, t.tour), document.createTextNode(` · ${t.to_reveal} more shift${+t.to_reveal === 1 ? '' : 's'}`)); list.append(s); });
+  fog.replaceChildren(el('h3', null, 'Fog of war'), el('p', 'rl-note', 'Tours ridden in the last 8 weeks that need more shifts before they get a level.'), fogged.length ? list : el('p', 'rl-note', 'Every tour has a level.'));
+  const sq = T.filter((t) => t.status === 'side').sort((a, b) => a.tour.localeCompare(b.tour));
+  side.replaceChildren(...sq.map((t) => tourCard(t, '#3b6fd8')));
+  const any = T[0]; const p = document.getElementById('dungeon-points');
+  if (any && p) {
+    const fmtD = (s) => new Date(`${s}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+    const now = new Date(); const b = new Date(`${any.bonus_from}T00:00:00`); const m = new Date(`${any.multiplier_from}T00:00:00`);
+    p.textContent = now < b ? `Points: dungeons don't change your points yet. From ${fmtD(any.bonus_from)}, beating a tour's average earns +5 (Level 2) up to +20 (Boss Tour) a shift. From ${fmtD(any.multiplier_from)}, parcels on harder tours count 5–20% extra. Tour bonuses add at most 20% to your points.`
+      : now < m ? `Points: beating a tour's average earns +5 (Level 2) up to +20 (Boss Tour) a shift. From ${fmtD(any.multiplier_from)}, parcels on harder tours also count 5–20% extra. Tour bonuses add at most 20% to your points.`
+      : 'Points: beating a tour\'s average earns +5 (Level 2) up to +20 (Boss Tour) a shift, and parcels on harder tours count 5–20% extra. Tour bonuses add at most 20% to your points.';
+  }
+}
+
 function drawAll() {
   const body = document.querySelector('#all tbody');
   const d = dash.data('league'); if (d.status !== 'ok') { body.replaceChildren(); return; }
@@ -652,14 +788,15 @@ function drawAll() {
     const tr = el('tr'); tr.dataset.key = r.key;
     const cl = el('td'); lvl(cl, r.level);
     const bd = el('td'); bd.append(badgeRow(r.badge_codes));
-    tr.append(el('td', null, r.rider), cl, el('td', 'hide-sm', DIV[r.pathway] || r.pathway), el('td', 'n', String(r.tours)), el('td', 'n hide-sm', String(r.days)), el('td', 'n', r.rating_all == null ? '' : String(r.rating_all)), bd, el('td', null, r.next_goal || ''));
+    const mtd = el('td'); mtd.append(masteryRow(r.mastery, 3));
+    tr.append(el('td', null, r.rider), cl, el('td', 'hide-sm', DIV[r.pathway] || r.pathway), el('td', 'n', String(r.tours)), el('td', 'n hide-sm', String(r.days)), el('td', 'n', r.rating_all == null ? '' : String(r.rating_all)), bd, mtd, el('td', null, r.next_goal || ''));
     return tr;
   }));
 }
 
 drawTabs();
 drawBadgeLegend();
-dash.onData(() => { drawTakeaway(); drawDiamond(); drawPodium(); drawBoard(); drawLadder(); drawMilestones('days'); drawMilestones('parcels'); drawArrival(); drawAll(); });
+dash.onData(() => { drawTakeaway(); drawDiamond(); drawPodium(); drawBoard(); drawLadder(); drawMilestones('days'); drawMilestones('parcels'); drawArrival(); drawDungeons(); drawAll(); });
 </script>
 
 </div>
