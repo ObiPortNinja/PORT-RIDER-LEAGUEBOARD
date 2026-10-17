@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PORT Rider League</title>
+<meta name="description" content="Points, levels and badges for PORT riders, updated before 9am and after the evening de-brief.">
+<meta name="theme-color" content="#161b2d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Rider League">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>:root{color-scheme:light;--font-anthropic-sans:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--font-anthropic-serif:Georgia,serif;--cds-gap-xs:4px;--cds-gap-sm:8px;--cds-gap-md:12px;--cds-gap-lg:16px;--cds-gap-xl:28px;--cds-pad-xs:4px;--cds-pad-sm:8px;--cds-pad-md:12px;--cds-pad-lg:16px;--cds-radius:10px;--cds-font-size-caption:12px;--cds-font-size-body:14px;--cds-font-size-heading:17px;--cds-font-size-title:26px;--cds-font-weight-medium:600;--color-panel:#fff;--color-bg:#f6f5f2;--color-fg:#1f1e1c;--color-fg-muted:#6b6862;--color-border-line:#e3e0da;--cds-chart-grid:#ece9e3;--cds-chart-axis:#ccc;--cds-chart-reference:#999;--color-bad:#c33}
+html,body{background:var(--color-bg);color:var(--color-fg);margin:0}
+body{padding:max(12px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));-webkit-text-size-adjust:100%}
+.app-bar{max-width:1180px;margin:0 auto 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;font:13px/1.3 var(--font-anthropic-sans);color:var(--color-fg-muted)}
+.app-bar button{font:inherit;color:var(--color-fg);background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:999px;padding:6px 14px;cursor:pointer}
+.app-bar .stale{color:var(--color-bad)}
+.dash-skeleton{opacity:.5}</style>
+<script src="d3.min.js"></script>
+
+<script>
+/* Data source: the rider sync publishes league.json next to this page. */
+window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
+(function(){
+  const calcs = {}; const cbs = []; let DATA = null;
+  window.dash = {
+    colors: ['#3b6fd8', '#e08a2c', '#2fa37a'],
+    calc: (n, o) => { calcs[n] = o; },
+    onData: (f) => { cbs.push(f); },
+    data: (id) => {
+      if (!DATA) return { status: 'loading' };
+      if (id === 'league') return { status: 'ok', data: DATA };
+      const c = calcs[id]; return c ? { status: 'ok', data: c.fn(DATA) } : { status: 'loading' };
+    }
+  };
+  const bar = () => document.getElementById('app-updated');
+  function show(updated, fromCache) {
+    const el = bar(); if (!el) return;
+    if (!updated) { el.textContent = fromCache ? 'Offline: showing the last copy' : ''; return; }
+    const d = new Date(updated);
+    const t = d.toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    const hrs = (Date.now() - d) / 36e5;
+    el.textContent = (fromCache ? 'Offline: last updated ' : 'Updated ') + t;
+    el.classList.toggle('stale', hrs > 36);
+  }
+  function apply(j, fromCache) {
+    DATA = Array.isArray(j) ? j : (j.rows || []);
+    show(Array.isArray(j) ? null : j.updated, fromCache);
+    cbs.forEach((f) => { try { f(); } catch (e) { console.error(e); } });
+  }
+  async function load() {
+    try {
+      const r = await fetch(window.LEAGUE_DATA_URL + (window.LEAGUE_DATA_URL.includes('?') ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store' });
+      if (!r.ok) throw new Error(r.status);
+      const j = await r.json();
+      try { localStorage.setItem('league-cache', JSON.stringify(j)); } catch (e) {}
+      apply(j, false);
+    } catch (e) {
+      let c = null; try { c = JSON.parse(localStorage.getItem('league-cache') || 'null'); } catch (x) {}
+      if (c) apply(c, true); else { const el = bar(); if (el) el.textContent = "Couldn't load the league. Check your connection and tap Refresh."; }
+    }
+  }
+  window.addEventListener('load', () => {
+    load();
+    const b = document.getElementById('app-refresh'); if (b) b.addEventListener('click', load);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') load(); });
+  });
+  if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+})();
+</script>
+</head>
+<body>
+<div class="app-bar"><span id="app-updated">Loading…</span><button id="app-refresh" type="button">Refresh</button></div>
+<div id="dash-root">
+<style>
+#dash-root { --dash-gutter: clamp(16px, 3vw, 32px); }
+.rl { font-family: var(--font-anthropic-sans); display: grid; gap: var(--cds-gap-xl); max-width: 1180px; margin-inline: auto; font-variant-numeric: tabular-nums; grid-template-columns: minmax(0, 1fr);
+  --ink: #1c1b19; --ink-2: rgba(28, 27, 25, .68);
+  --m-rookie: linear-gradient(135deg, #e3e5e8 0%, #aab0b7 38%, #d7dadf 55%, #8d949c 100%);
+  --m-bronze: linear-gradient(135deg, #f6cfa6 0%, #b8703a 38%, #eab07a 55%, #8a4a1f 100%);
+  --m-silver: linear-gradient(135deg, #fbfcfd 0%, #b9c0c8 38%, #eef1f4 55%, #959da7 100%);
+  --m-gold: linear-gradient(135deg, #fff4bf 0%, #d6a21a 38%, #ffe27a 55%, #a87c0a 100%);
+  --m-platinum: linear-gradient(135deg, #ffffff 0%, #cfd6de 30%, #f3f6f9 50%, #b4bfcb 72%, #e9eef3 100%);
+  --m-diamond: linear-gradient(115deg, #e9fbff 0%, #9be2ff 18%, #ffffff 32%, #7fd3ff 48%, #dff8ff 62%, #a6e7ff 78%, #ffffff 100%); }
+.rl-head h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+.rl-head p { margin: var(--cds-gap-xs) 0 0; color: var(--color-fg-muted); max-width: 70ch; }
+.rl > * { min-width: 0; }
+.rl-sec h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.rl-note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: 0 0 var(--cds-gap-md); max-width: 80ch; }
+.rl-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.rl-div { display: inline-flex; border: 1px solid var(--color-border-line); border-radius: 999px; padding: 3px; gap: 3px; margin-top: var(--cds-gap-md); }
+.rl-div button { font: inherit; padding: var(--cds-pad-xs) var(--cds-pad-md); border-radius: 999px; border: 0; background: transparent; color: var(--color-fg); cursor: pointer; }
+.rl-div button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); }
+.rl-div button:focus-visible, .rl-tab:focus-visible, .rl-search:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+
+/* precious materials */
+.mat { color: var(--ink); border: 1px solid rgba(0, 0, 0, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), inset 0 -2px 6px rgba(0, 0, 0, .12), 0 1px 2px rgba(0, 0, 0, .12); position: relative; overflow: hidden; }
+.mat .sub, .mat .req, .mat .rl-place { color: var(--ink-2); }
+.mat-Rookie { background: var(--m-rookie); }
+.mat-Beginner, .mat-bronze { background: var(--m-bronze); }
+.mat-Regular, .mat-silver { background: var(--m-silver); }
+.mat-Pro, .mat-gold { background: var(--m-gold); }
+.mat-Expert, .mat-platinum { background: var(--m-platinum); }
+.mat-Specialist, .mat-diamond { background: var(--m-diamond); background-size: 300% 300%; animation: rl-shine 6s ease-in-out infinite; }
+.mat-Specialist::after, .mat-diamond::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .85) 48%, transparent 60%); transform: translateX(-120%); animation: rl-sweep 3.2s ease-in-out infinite; pointer-events: none; }
+@keyframes rl-shine { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes rl-sweep { 0% { transform: translateX(-120%); } 60%, 100% { transform: translateX(120%); } }
+@media (prefers-reduced-motion: reduce) { .mat-Specialist, .mat-diamond, .mat-Specialist::after, .mat-diamond::after { animation: none !important; } .rl-badge .sheen, .rl-star .sheen { display: none; } }
+
+/* diamond deliverer */
+.rl-star { display: grid; grid-template-columns: auto 1fr; gap: var(--cds-gap-lg); align-items: center; border-radius: var(--cds-radius); padding: var(--cds-pad-lg); }
+.rl-star .gem { width: 72px; height: 72px; }
+.rl-star h2 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; line-height: 1.1; }
+.rl-star .who { display: grid; gap: 6px; margin-top: var(--cds-gap-xs); }
+.rl-star .who b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.1; }
+.rl-star.empty { background: var(--color-panel); border: 1px dashed var(--color-border-line); color: var(--color-fg); }
+.rl-star.empty .sub { color: var(--color-fg-muted); margin-top: var(--cds-gap-xs); }
+
+/* podium */
+.rl-podium { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--cds-gap-md); }
+.rl-step { display: grid; gap: var(--cds-gap-xs); align-content: start; border-radius: var(--cds-radius); padding: var(--cds-pad-lg); }
+.rl-place { font-size: var(--cds-font-size-caption); letter-spacing: .08em; text-transform: uppercase; font-weight: var(--cds-font-weight-medium); }
+.rl-step .rl-name { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); line-height: 1.1; }
+.rl-step .rl-pts { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.rl-step .sub { font-size: var(--cds-font-size-caption); }
+
+/* boards and tables */
+.rl-tabs { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); margin-bottom: var(--cds-gap-md); }
+.rl-tab { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-radius: 999px; border: 1px solid var(--color-border-line); background: transparent; color: var(--color-fg); cursor: pointer; }
+.rl-tab[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+.rl-scroll { overflow: auto; max-height: 34rem; }
+.rl table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-body); }
+.rl th { text-align: left; font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); position: sticky; top: 0; z-index: 1; background: var(--color-panel); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.rl td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: middle; }
+.rl td.n, .rl th.n { text-align: right; }
+.rl .rank { color: var(--color-fg-muted); width: 2.5rem; }
+.rl .lvl { display: inline-block; font-size: var(--cds-font-size-caption); padding: 1px var(--cds-pad-sm); border-radius: 999px; white-space: nowrap; font-weight: var(--cds-font-weight-medium); }
+
+/* levels */
+.rl-ladder { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); gap: var(--cds-gap-sm); }
+.rl-rung { border-radius: var(--cds-radius); padding: var(--cds-pad-md); display: grid; gap: 2px; }
+.rl-rung b { font-weight: var(--cds-font-weight-medium); letter-spacing: .02em; }
+.rl-rung .big { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); }
+.rl-rung .req { font-size: var(--cds-font-size-caption); }
+
+/* milestones */
+.rl-ms { display: grid; gap: var(--cds-gap-md); }
+.rl-track { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: var(--cds-gap-sm); }
+.rl-mile { display: grid; justify-items: center; align-content: start; gap: 4px; text-align: center; padding: var(--cds-pad-md) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-panel); }
+.rl-mile .cnt { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); line-height: 1; }
+.rl-mile .lab { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rl-mile .names { font-size: var(--cds-font-size-caption); color: var(--color-fg); text-wrap: pretty; }
+.rl-next { display: grid; gap: var(--cds-gap-xs); }
+.rl-next .row { display: grid; grid-template-columns: minmax(7rem, 12rem) 1fr auto; gap: var(--cds-gap-sm); align-items: center; font-size: var(--cds-font-size-body); }
+.rl-bar { height: 8px; border-radius: 999px; background: var(--cds-chart-grid); overflow: hidden; }
+.rl-bar i { display: block; height: 100%; border-radius: 999px; }
+.rl-next .togo { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); white-space: nowrap; }
+
+/* badges */
+.rl-badges { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.rl-badge { display: inline-block; line-height: 0; }
+.rl-badge svg { width: 30px; height: 30px; display: block; }
+.rl-badge.lg svg { width: 52px; height: 52px; }
+.rl-legend-badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: var(--cds-gap-md); }
+.rl-legend-badges > div { display: flex; gap: var(--cds-gap-sm); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rl-legend-badges b { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); display: block; font-size: var(--cds-font-size-body); }
+
+.rl-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+.rl-chart { position: relative; min-height: 320px; }
+.rl-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; }
+.rl-tip .t { color: var(--cds-text-secondary); }
+.rl-legend { display: flex; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-xs); }
+.rl-legend i { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+.rl-search { font: inherit; width: 100%; max-width: 22rem; padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); margin-bottom: var(--cds-gap-sm); }
+.rl-rules { display: grid; gap: var(--cds-gap-md); font-size: var(--cds-font-size-body); }
+.rl-rules ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; }
+.rl-pts-table { max-width: 22rem; }
+.rl-pts-table td { padding: 3px var(--cds-pad-sm); }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.rl-fail { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: 6rem; }
+.rl-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+@media (max-width: 640px) { .rl .hide-sm { display: none; } .rl-next .row { grid-template-columns: 1fr auto; } .rl-next .rl-bar { grid-column: 1 / -1; grid-row: 2; } .rl-star { grid-template-columns: 1fr; } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g-bronze" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6cfa6"/><stop offset=".4" stop-color="#b8703a"/><stop offset=".6" stop-color="#eab07a"/><stop offset="1" stop-color="#7d4119"/></linearGradient>
+    <linearGradient id="g-silver" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#aeb6bf"/><stop offset=".6" stop-color="#eef1f4"/><stop offset="1" stop-color="#858e99"/></linearGradient>
+    <linearGradient id="g-gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff4bf"/><stop offset=".4" stop-color="#d6a21a"/><stop offset=".6" stop-color="#ffe27a"/><stop offset="1" stop-color="#9a7008"/></linearGradient>
+    <linearGradient id="g-platinum" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#c9d1da"/><stop offset=".55" stop-color="#f3f6f9"/><stop offset="1" stop-color="#a7b3c0"/></linearGradient>
+    <linearGradient id="g-diamond" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ecfcff"/><stop offset=".3" stop-color="#8fdcff"/><stop offset=".5" stop-color="#ffffff"/><stop offset=".7" stop-color="#6fcdfc"/><stop offset="1" stop-color="#c9f2ff"/></linearGradient>
+    <linearGradient id="g-sheen" x1="-1" y1="0" x2="0" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+      <animate attributeName="x1" values="-1;1.2;1.2" dur="3s" repeatCount="indefinite"/><animate attributeName="x2" values="0;2.2;2.2" dur="3s" repeatCount="indefinite"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="rl">
+  <header class="rl-head" id="top">
+    <h1>PORT Rider League</h1>
+    <p id="takeaway" data-source="league_summary" class="dash-skeleton">—</p>
+    <div class="rl-div" role="group" aria-label="Division">
+      <button data-div="D2D" aria-pressed="true">Doorstep (D2D)</button>
+      <button data-div="OOH" aria-pressed="false">Lockers (OOH)</button>
+    </div>
+  </header>
+
+  <section class="rl-sec" id="diamond-sec" aria-label="Diamond Deliverer">
+    <div id="diamond" data-source="league"></div>
+  </section>
+
+  <section class="rl-sec" id="podium-sec">
+    <h2 id="podium-h">Top of the Doorstep division · last 28 days</h2>
+    <p class="rl-note">Points: 1 per parcel delivered, +30 for a perfect shift, +20 for leaving the hub before 11:30, +15 for leading a training shift with a new rider, +10 for checking in at the hub by 09:30 (+5 by 10:30). Each division only counts its own shifts, so riders who do both appear in both. Updated every weekday before 09:00 and again around 18:30; evening on-time (EDW) scores come from the de-briefs and are swapped for InPost's official scores the next morning.</p>
+    <div class="rl-podium" id="podium" data-source="league"></div>
+  </section>
+
+  <section class="rl-sec" id="boards">
+    <h2 id="boards-h">Doorstep leaderboards · last 28 days</h2>
+    <p class="rl-note" id="board-note">Riders with at least 3 shifts in this division in the last 28 days.</p>
+    <div class="rl-tabs" role="group" aria-label="Leaderboard" id="board-tabs"></div>
+    <div class="rl-card rl-scroll">
+      <table id="board" data-source="league" data-row-key="key">
+        <thead><tr><th class="rank">#</th><th data-field="rider">Rider</th><th data-field="level">Level</th><th class="n" id="board-metric-th" data-field="d_points_28d">Points</th><th class="n hide-sm" data-field="d_shifts_28d">Shifts</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="rl-sec" id="levels">
+    <h2>Levels</h2>
+    <p class="rl-note">Your level comes from all the tours you've done for PORT and your rating since July, and it's the same in both divisions. Doorstep rating = 40% on-time window (EDW) + 40% delivery success + 20% photo compliance; lockers rating = delivery success.</p>
+    <div class="rl-ladder" id="ladder" data-source="league_levels"></div>
+  </section>
+
+  <section class="rl-sec rl-ms" id="days-sec">
+    <div>
+      <h2>Days at PORT</h2>
+      <p class="rl-note">Days from your first PORT tour to your latest one. Each milestone shows how many riders have reached it, and who's there right now.</p>
+    </div>
+    <div class="rl-track" id="days-track" data-source="league"></div>
+    <div class="rl-card"><h2>Next up</h2><p class="rl-note">Riders closest to their next days milestone.</p><div class="rl-next" id="days-next" data-source="league"></div></div>
+  </section>
+
+  <section class="rl-sec rl-ms" id="parcels-sec">
+    <div>
+      <h2>Parcels delivered</h2>
+      <p class="rl-note">Parcels delivered on solo and lead shifts since tracking started in July 2026, doorstep and lockers together.</p>
+    </div>
+    <div class="rl-track" id="parcels-track" data-source="league"></div>
+    <div class="rl-card"><h2>Next up</h2><p class="rl-note">Riders closest to their next parcels milestone.</p><div class="rl-next" id="parcels-next" data-source="league"></div></div>
+  </section>
+
+  <section class="rl-sec rl-grid2" id="arrival-sec">
+    <div class="rl-card">
+      <h2>Arrival time vs rating</h2>
+      <p class="rl-note">Each dot is a rider in a division: average hub check-in over the last 28 days (left = earlier) against their rating in that division. 2+ recorded check-ins.</p>
+      <div class="rl-legend"><span><i id="lg0"></i>Doorstep (D2D)</span><span><i id="lg1"></i>Lockers (OOH)</span></div>
+      <div class="rl-chart" id="arrival" data-source="league"></div>
+    </div>
+    <div class="rl-card">
+      <h2>How to climb</h2>
+      <div class="rl-rules">
+        <table class="rl-pts-table"><tbody>
+          <tr><td>Each parcel delivered</td><td class="n">+1</td></tr>
+          <tr><td>Perfect shift</td><td class="n">+30</td></tr>
+          <tr><td>Leave the hub before 11:30</td><td class="n">+20</td></tr>
+          <tr><td>Lead a training shift (a new rider shadows you)</td><td class="n">+15</td></tr>
+          <tr><td>Check in at the hub by 09:30</td><td class="n">+10</td></tr>
+          <tr><td>Check in at the hub by 10:30</td><td class="n">+5</td></tr>
+        </tbody></table>
+        <ul>
+          <li><b>Perfect shift:</b> a solo shift with 50+ parcels taken out, or a lead (training) shift with 40+, and 98%+ delivered. On doorstep shifts you also need 95%+ inside InPost's delivery window (EDW). Shifts still waiting for their scores don't count yet, and don't break a streak.</li>
+          <li><b>Diamond Deliverer:</b> #1 in your division 3 weeks in a row (Monday to Sunday points, at least 2 shifts that week), or 10 perfect shifts in a row.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="rl-sec" id="badge-sec">
+    <h2>Badges</h2>
+    <p class="rl-note">Earned automatically from your shifts. The rarer the badge, the rarer the material: bronze, silver, gold, platinum, then diamond.</p>
+    <div class="rl-card rl-legend-badges" id="badge-legend"></div>
+  </section>
+
+  <section class="rl-sec" id="riders">
+    <h2>Every rider</h2>
+    <p class="rl-note">Level, badges and what's needed for the next level. Hover or tap a badge to see what it's for.</p>
+    <input class="rl-search" id="rl-search" type="search" placeholder="Search a name" aria-label="Search riders">
+    <div class="rl-card rl-scroll">
+      <table id="all" data-source="league" data-row-key="key">
+        <thead><tr><th data-field="rider">Rider</th><th data-field="level">Level</th><th class="hide-sm" data-field="pathway">Main division</th><th class="n" data-field="tours">Tours</th><th class="n hide-sm" data-field="days">Days</th><th class="n" data-field="rating_all">Rating</th><th data-field="badge_codes">Badges</th><th data-field="next_goal">Next level needs</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+const LEVELS = ['Rookie', 'Beginner', 'Regular', 'Pro', 'Expert', 'Specialist'];
+const REQ = { Rookie: 'Your first tours', Beginner: '5+ tours', Regular: '20+ tours · rating 80+', Pro: '50+ tours · rating 85+', Expert: '100+ tours · rating 90+', Specialist: '150+ tours · rating 95+' };
+const DIV = { D2D: 'Doorstep', OOH: 'Lockers' };
+const DAY_MS = [30, 90, 180, 270, 365];
+const PARCEL_MS = [1000, 2500, 5000, 10000];
+const truthy = (v) => v === true || v === 'true' || v === 'TRUE' || v === 1 || v === '1';
+
+dash.calc('league_levels', {
+  inputs: ['league'],
+  title: 'Riders per level',
+  description: 'Counts active riders at each level (one row per rider, using their main division).',
+  fn: (league) => {
+    const main = league.filter((r) => truthy(r.primary));
+    return LEVELS.map((level) => ({ level, riders: main.filter((r) => r.level === level).length }));
+  },
+});
+
+dash.calc('league_summary', {
+  inputs: ['league'],
+  title: 'Division leaders',
+  description: 'The rider with the most points in each division over the last 28 days (3+ shifts in that division), and the number of active riders.',
+  fn: (league) => ['D2D', 'OOH'].map((division) => {
+    const top = league.filter((r) => r.division === division && Number(r.d_shifts_28d) >= 3).sort((a, b) => Number(b.d_points_28d) - Number(a.d_points_28d))[0];
+    return { division, leader: top ? top.rider : '', points: top ? Number(top.d_points_28d) : 0, riders: league.filter((r) => truthy(r.primary)).length };
+  }),
+});
+
+const fmtInt = d3.format(',');
+const fmtPct = d3.format('.1%');
+const fmtK = (n) => n >= 1000 ? `${d3.format('~g')(n / 1000)}k` : String(n);
+const hhmm = (m) => m == null ? '' : `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(Math.round(m % 60)).padStart(2, '0')}`;
+let div = 'D2D';
+let board = 'points';
+const min3 = (r) => r.d_shifts_28d >= 3;
+const BOARDS = {
+  D2D: {
+    points: { tab: 'Points', label: 'Points', field: 'd_points_28d', show: (r) => fmtInt(r.d_points_28d), keep: min3, sort: (a, b) => b.d_points_28d - a.d_points_28d, note: 'Doorstep points: parcels + perfect shifts + leaving before 11:30 + training shifts + early check-ins. Riders with 3+ doorstep shifts in the last 28 days.' },
+    parcels: { tab: 'Parcels', label: 'Parcels', field: 'd_delivered_28d', show: (r) => fmtInt(r.d_delivered_28d), keep: min3, sort: (a, b) => b.d_delivered_28d - a.d_delivered_28d, note: 'Doorstep parcels delivered. Riders with 3+ doorstep shifts.' },
+    edw: { tab: 'On-time window (EDW)', label: 'EDW', field: 'd_edw_28d', show: (r) => fmtPct(r.d_edw_28d), keep: (r) => min3(r) && r.d_edw_28d != null, sort: (a, b) => b.d_edw_28d - a.d_edw_28d, note: 'Share of parcels delivered in the promised window (InPost scorecard). Riders with 3+ doorstep shifts.' },
+    success: { tab: 'Delivery success', label: 'Success', field: 'd_success_28d', show: (r) => fmtPct(r.d_success_28d), keep: (r) => min3(r) && r.d_success_28d != null, sort: (a, b) => b.d_success_28d - a.d_success_28d, note: 'Delivered ÷ taken out on doorstep tours. Riders with 3+ doorstep shifts.' },
+    image: { tab: 'Photo compliance', label: 'Photos', field: 'd_image_28d', show: (r) => fmtPct(r.d_image_28d), keep: (r) => min3(r) && r.d_image_28d != null, sort: (a, b) => b.d_image_28d - a.d_image_28d, note: 'Share of proof-of-delivery photos that passed InPost checks. Riders with 3+ doorstep shifts.' },
+    out: { tab: 'Out by 11:30', label: 'Shifts', field: 'd_departs_28d', show: (r) => String(r.d_departs_28d), keep: (r) => min3(r) && r.d_departs_28d > 0, sort: (a, b) => b.d_departs_28d - a.d_departs_28d || b.d_points_28d - a.d_points_28d, note: 'Doorstep shifts where the rider left the hub before 11:30 (+20 points each).' },
+    train: { tab: 'Trainers', label: 'Training shifts', field: 'd_leads_28d', show: (r) => String(r.d_leads_28d), keep: (r) => r.d_leads_28d > 0, sort: (a, b) => b.d_leads_28d - a.d_leads_28d || b.d_points_28d - a.d_points_28d, note: 'Doorstep shifts where the rider took a new rider out with them (+15 points each).' },
+    early: { tab: 'Early bird', label: 'Avg check-in', field: 'd_checkin_min_28d', show: (r) => hhmm(r.d_checkin_min_28d), keep: (r) => r.d_checkins_28d >= 3 && r.d_checkin_min_28d != null, sort: (a, b) => a.d_checkin_min_28d - b.d_checkin_min_28d, note: 'Average hub check-in on doorstep shifts, riders with 3+ recorded check-ins.' },
+  },
+  OOH: {
+    points: { tab: 'Points', label: 'Points', field: 'd_points_28d', show: (r) => fmtInt(r.d_points_28d), keep: min3, sort: (a, b) => b.d_points_28d - a.d_points_28d, note: 'Lockers points: parcels + perfect shifts + leaving before 11:30 + training shifts + early check-ins. Riders with 3+ lockers shifts in the last 28 days.' },
+    parcels: { tab: 'Parcels', label: 'Parcels', field: 'd_delivered_28d', show: (r) => fmtInt(r.d_delivered_28d), keep: min3, sort: (a, b) => b.d_delivered_28d - a.d_delivered_28d, note: 'Parcels delivered to lockers. Riders with 3+ lockers shifts.' },
+    success: { tab: 'Delivery success', label: 'Success', field: 'd_success_28d', show: (r) => fmtPct(r.d_success_28d), keep: (r) => min3(r) && r.d_success_28d != null, sort: (a, b) => b.d_success_28d - a.d_success_28d, note: 'Delivered ÷ taken out on lockers tours. Riders with 3+ lockers shifts.' },
+    collected: { tab: 'Collections', label: 'Collected', field: 'd_collected_28d', show: (r) => fmtInt(r.d_collected_28d), keep: (r) => min3(r) && r.d_collected_28d != null, sort: (a, b) => b.d_collected_28d - a.d_collected_28d, note: 'Parcels collected from lockers and brought back to the hub. Riders with 3+ lockers shifts.' },
+    out: { tab: 'Out by 11:30', label: 'Shifts', field: 'd_departs_28d', show: (r) => String(r.d_departs_28d), keep: (r) => min3(r) && r.d_departs_28d > 0, sort: (a, b) => b.d_departs_28d - a.d_departs_28d || b.d_points_28d - a.d_points_28d, note: 'Lockers shifts where the rider left the hub before 11:30 (+20 points each).' },
+    train: { tab: 'Trainers', label: 'Training shifts', field: 'd_leads_28d', show: (r) => String(r.d_leads_28d), keep: (r) => r.d_leads_28d > 0, sort: (a, b) => b.d_leads_28d - a.d_leads_28d || b.d_points_28d - a.d_points_28d, note: 'Lockers shifts where the rider took a new rider out with them to shadow (+15 points each).' },
+    early: { tab: 'Early bird', label: 'Avg check-in', field: 'd_checkin_min_28d', show: (r) => hhmm(r.d_checkin_min_28d), keep: (r) => r.d_checkins_28d >= 2 && r.d_checkin_min_28d != null, sort: (a, b) => a.d_checkin_min_28d - b.d_checkin_min_28d, note: 'Average hub check-in on lockers shifts, riders with 2+ recorded check-ins.' },
+  },
+};
+const NUMS = ['tours', 'days', 'd_points_28d', 'd_delivered_28d', 'd_shifts_28d', 'd_checkins_28d', 'd_perfect_28d', 'd_departs_28d', 'd_leads_28d', 'leads_all', 'delivered_all', 'perfect_streak', 'top_weeks', 'weeks_at_1'];
+const NULLABLE = ['d_edw_28d', 'd_success_28d', 'd_image_28d', 'd_collected_28d', 'd_rating_28d', 'd_checkin_min_28d', 'rating_all'];
+const rows = () => {
+  const d = dash.data('league');
+  if (d.status !== 'ok') return [];
+  return d.data.map((r) => {
+    const o = { ...r, primary: truthy(r.primary), diamond: truthy(r.diamond) };
+    NUMS.forEach((k) => { o[k] = +r[k] || 0; });
+    NULLABLE.forEach((k) => { o[k] = r[k] == null || r[k] === '' ? null : +r[k]; });
+    return o;
+  });
+};
+const main = () => rows().filter((r) => r.primary);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const lvl = (td, level) => { td.replaceChildren(el('span', `lvl mat mat-${level}`, level)); };
+const fail = (box, status) => { if (status === 'error' || status === 'connect') box.replaceChildren(el('div', 'rl-fail', 'Failed to load')); };
+
+/* ---------- digital badges (inline SVG) ---------- */
+const SVGNS = 'http://www.w3.org/2000/svg';
+const sv = (tag, attrs, parent) => { const n = document.createElementNS(SVGNS, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); if (parent) parent.appendChild(n); return n; };
+const TIERS = {
+  tours: [[250, 'diamond'], [150, 'platinum'], [100, 'gold'], [50, 'silver'], [10, 'bronze']],
+  days: [[365, 'diamond'], [270, 'platinum'], [180, 'gold'], [90, 'silver'], [30, 'bronze']],
+  parcels: [[10000, 'diamond'], [5000, 'gold'], [2500, 'silver'], [1000, 'bronze']],
+  perfect: [[50, 'diamond'], [25, 'gold'], [10, 'silver'], [5, 'bronze']],
+  champion: [[5, 'diamond'], [3, 'platinum'], [1, 'gold']],
+  streak: [[12, 'gold'], [8, 'silver'], [4, 'bronze']],
+  trainer: [[50, 'diamond'], [25, 'platinum'], [10, 'gold'], [5, 'silver'], [1, 'bronze']],
+};
+const BADGE = {
+  tours: { shape: 'medal', name: (n) => `${n} tours`, desc: 'PORT tours completed' },
+  days: { shape: 'hex', name: (n) => `${n} days at PORT`, desc: 'Days since your first tour' },
+  parcels: { shape: 'shield', name: (n) => `${fmtInt(n)} parcels`, desc: 'Parcels delivered since July' },
+  perfect: { shape: 'star', name: (n) => `${n} perfect shifts`, desc: 'Perfect shifts in total' },
+  trainer: { shape: 'trainer', name: (n) => `Trainer: ${n} training shift${n === 1 ? '' : 's'}`, desc: 'New riders taken out to learn the job', iconOnly: true },
+  champion: { shape: 'crown', name: (n) => `Weekly champion ×${n}`, desc: '#1 in your division for a week', iconOnly: true },
+  streak: { shape: 'flame', name: (n) => `${n}-week streak`, desc: 'Weeks in a row with a shift', iconOnly: true },
+  earlybird: { shape: 'sun', name: () => 'Early bird', desc: 'Average check-in by 09:30', tier: 'gold' },
+  earlyout: { shape: 'clock', name: () => 'Out by 11:30', desc: 'Left the hub before 11:30 on 3+ shifts', tier: 'silver' },
+  window: { shape: 'target', name: () => 'Window master', desc: '95%+ on-time window (EDW), 5+ doorstep shifts', tier: 'platinum' },
+  photo: { shape: 'camera', name: () => 'Photo pro', desc: '98%+ photo compliance, 5+ doorstep shifts', tier: 'silver' },
+  diamond: { shape: 'gem', name: () => 'Diamond Deliverer', desc: '#1 three weeks running, or 10 perfect shifts in a row', tier: 'diamond' },
+};
+const tierOf = (type, n) => { const B = BADGE[type]; if (B.tier) return B.tier; const t = (TIERS[type] || []).find(([min]) => n >= min); return t ? t[1] : 'bronze'; };
+const INK = { stroke: '#1c1b19', 'stroke-opacity': '.75' };
+const ICON = {
+  sun: (g) => { sv('circle', { cx: 32, cy: 33, r: 7, fill: '#1c1b19', 'fill-opacity': '.75' }, g); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; sv('line', { x1: 32 + Math.cos(a) * 11, y1: 33 + Math.sin(a) * 11, x2: 32 + Math.cos(a) * 15, y2: 33 + Math.sin(a) * 15, ...INK, 'stroke-width': 2.5, 'stroke-linecap': 'round' }, g); } },
+  clock: (g) => { sv('circle', { cx: 32, cy: 33, r: 12, fill: 'none', ...INK, 'stroke-width': 2.5 }, g); sv('path', { d: 'M32 25v8l6 4', fill: 'none', ...INK, 'stroke-width': 2.5, 'stroke-linecap': 'round' }, g); },
+  target: (g) => { [12, 7.5, 3].forEach((r, i) => sv('circle', { cx: 32, cy: 33, r, fill: i === 2 ? '#1c1b19' : 'none', 'fill-opacity': '.75', ...INK, 'stroke-width': 2.2 }, g)); },
+  camera: (g) => { sv('rect', { x: 20, y: 26, width: 24, height: 16, rx: 3, fill: 'none', ...INK, 'stroke-width': 2.4 }, g); sv('circle', { cx: 32, cy: 34, r: 4.5, fill: 'none', ...INK, 'stroke-width': 2.4 }, g); sv('rect', { x: 27, y: 22.5, width: 10, height: 4, rx: 1, fill: '#1c1b19', 'fill-opacity': '.75' }, g); },
+  trainer: (g) => { sv('circle', { cx: 26, cy: 27, r: 5, fill: '#1c1b19', 'fill-opacity': '.75' }, g); sv('path', { d: 'M17 43c0-6 4-10 9-10s9 4 9 10z', fill: '#1c1b19', 'fill-opacity': '.75' }, g); sv('circle', { cx: 40, cy: 30, r: 4, fill: '#1c1b19', 'fill-opacity': '.5' }, g); sv('path', { d: 'M33 43c0-5 3-8 7-8s7 3 7 8z', fill: '#1c1b19', 'fill-opacity': '.5' }, g); },
+  crown: (g) => { sv('path', { d: 'M20 41 L22 26 L28 32 L32 23 L36 32 L42 26 L44 41 Z', fill: '#1c1b19', 'fill-opacity': '.72' }, g); },
+  flame: (g) => { sv('path', { d: 'M32 21c2 5 8 8 8 14a8 8 0 0 1-16 0c0-4 3-6 4-9 1 3 2 4 4 4-1-4-1-6 0-9z', fill: '#1c1b19', 'fill-opacity': '.72' }, g); },
+  gem: (g) => { sv('path', { d: 'M14 24 H50 M22 10 L28 24 L32 10 L36 24 L42 10 M28 24 L32 58 L36 24', fill: 'none', stroke: 'rgba(0,40,70,.4)', 'stroke-width': 1.3 }, g); },
+};
+function shapePath(shape) {
+  if (shape === 'hex') return 'M32 5 L55 18 V46 L32 59 L9 46 V18 Z';
+  if (shape === 'shield') return 'M32 5 L54 12 V31 C54 45 44 54 32 59 C20 54 10 45 10 31 V12 Z';
+  if (shape === 'star') { let d = ''; for (let i = 0; i < 10; i++) { const r = i % 2 ? 13 : 28, a = -Math.PI / 2 + i * Math.PI / 5; d += `${i ? 'L' : 'M'}${(32 + r * Math.cos(a)).toFixed(1)} ${(34 + r * Math.sin(a)).toFixed(1)} `; } return d + 'Z'; }
+  if (shape === 'gem') return 'M14 24 L22 10 H42 L50 24 L32 58 Z';
+  return null;
+}
+function badgeEl(code, large) {
+  const [type, raw] = code.split(':'); const n = raw ? +raw : null; const B = BADGE[type]; if (!B) return null;
+  const tier = tierOf(type, n); const name = B.name(n);
+  const wrap = el('span', `rl-badge${large ? ' lg' : ''}`); wrap.title = `${name} · ${B.desc}`;
+  const svg = sv('svg', { viewBox: '0 0 64 64', role: 'img', 'aria-label': name });
+  sv('title', {}, svg).textContent = name;
+  const g = sv('g', {}, svg);
+  const medal = B.shape === 'medal';
+  if (medal) { sv('path', { d: 'M20 2 L29 20 L23 23 L14 5 Z', fill: '#c0392b' }, g); sv('path', { d: 'M44 2 L35 20 L41 23 L50 5 Z', fill: '#2c5aa0' }, g); }
+  const p = shapePath(B.shape);
+  const outline = { fill: `url(#g-${tier})`, stroke: 'rgba(0,0,0,.35)', 'stroke-width': 1.5, 'stroke-linejoin': 'round' };
+  const cy = medal ? 39 : 33;
+  const base = p ? sv('path', { d: p, ...outline }, g) : sv('circle', { cx: 32, cy, r: medal ? 22 : 27, ...outline }, g);
+  if (!p) sv('circle', { cx: 32, cy, r: medal ? 17 : 21, fill: 'none', stroke: 'rgba(0,0,0,.22)', 'stroke-width': 1.2 }, g);
+  if (tier === 'diamond' || tier === 'platinum') { const sh = base.cloneNode(); sh.setAttribute('fill', 'url(#g-sheen)'); sh.setAttribute('stroke', 'none'); sh.setAttribute('class', 'sheen'); g.appendChild(sh); }
+  if (ICON[B.shape]) ICON[B.shape](g);
+  if (n != null && !B.iconOnly) {
+    const t = sv('text', { x: 32, y: medal ? 44 : B.shape === 'star' ? 39 : 38, 'text-anchor': 'middle', 'font-size': (type === 'parcels' ? fmtK(n) : String(n)).length > 3 ? 12 : 15, 'font-weight': 700, fill: '#1c1b19', 'font-family': 'system-ui, sans-serif' }, g);
+    t.textContent = type === 'parcels' ? fmtK(n) : String(n);
+  }
+  if (B.iconOnly && n != null) { sv('circle', { cx: 51, cy: 52, r: 10, fill: '#1c1b19' }, g); const t = sv('text', { x: 51, y: 56, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: '#fff', 'font-family': 'system-ui, sans-serif' }, g); t.textContent = String(n); }
+  wrap.append(svg); return wrap;
+}
+const badgeRow = (codes) => { const box = el('div', 'rl-badges'); String(codes || '').split('|').filter(Boolean).map((c) => badgeEl(c)).filter(Boolean).forEach((b) => box.append(b)); return box; };
+
+/* ---------- interactions ---------- */
+function drawTabs() {
+  const box = document.getElementById('board-tabs');
+  box.replaceChildren(...Object.entries(BOARDS[div]).map(([k, b]) => {
+    const t = el('button', 'rl-tab', b.tab); t.setAttribute('aria-pressed', String(k === board));
+    t.addEventListener('click', () => { board = k; drawTabs(); drawBoard(); });
+    return t;
+  }));
+}
+document.querySelectorAll('.rl-div button').forEach((b) => b.addEventListener('click', () => {
+  div = b.dataset.div;
+  document.querySelectorAll('.rl-div button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  if (!BOARDS[div][board]) board = 'points';
+  document.getElementById('podium-h').textContent = `Top of the ${DIV[div]} division · last 28 days`;
+  document.getElementById('boards-h').textContent = `${DIV[div]} leaderboards · last 28 days`;
+  drawTabs(); drawPodium(); drawBoard();
+}));
+const search = document.getElementById('rl-search');
+search.addEventListener('input', () => drawAll());
+
+/* ---------- sections ---------- */
+function drawTakeaway() {
+  const box = document.getElementById('takeaway');
+  const s = dash.data('league_summary');
+  if (s.status !== 'ok' || !s.data.length) return;
+  box.classList.remove('dash-skeleton');
+  const by = Object.fromEntries(s.data.map((r) => [r.division, r]));
+  const parts = ['D2D', 'OOH'].filter((k) => by[k] && by[k].leader).map((k) => `${by[k].leader} leads ${DIV[k]} with ${fmtInt(by[k].points)} points`);
+  box.textContent = `${parts.join('; ')} over the last 28 days. ${s.data[0].riders} active riders across both divisions.`;
+}
+
+function gemSvg() {
+  const s = sv('svg', { viewBox: '0 0 64 64', class: 'gem', 'aria-hidden': 'true' }); const g = sv('g', {}, s);
+  const b = sv('path', { d: 'M8 24 L18 8 H46 L56 24 L32 60 Z', fill: 'url(#g-diamond)', stroke: 'rgba(0,40,70,.45)', 'stroke-width': 1.5, 'stroke-linejoin': 'round' }, g);
+  sv('path', { d: 'M8 24 H56 M18 8 L26 24 L32 8 L38 24 L46 8 M26 24 L32 60 L38 24', fill: 'none', stroke: 'rgba(0,40,70,.35)', 'stroke-width': 1.2 }, g);
+  const sh = b.cloneNode(); sh.setAttribute('fill', 'url(#g-sheen)'); sh.setAttribute('stroke', 'none'); sh.setAttribute('class', 'sheen'); g.append(sh);
+  return s;
+}
+function drawDiamond() {
+  const box = document.getElementById('diamond');
+  const d = dash.data('league'); if (d.status !== 'ok') { fail(box, d.status); return; }
+  const M = main(); const stars = M.filter((r) => r.diamond);
+  if (stars.length) {
+    const c = el('div', 'rl-star mat mat-diamond');
+    const body = el('div');
+    body.append(el('div', 'rl-place', stars.length > 1 ? 'Diamond Deliverers · star players' : 'Diamond Deliverer · star player'));
+    const who = el('div', 'who');
+    stars.forEach((r) => { const line = el('div'); const b = el('b', null, r.rider); b.dataset.source = 'league'; b.dataset.field = 'rider'; b.dataset.where = `key=${encodeURIComponent(r.key)}`; line.append(b, el('div', 'sub', r.diamond_reason)); who.append(line); });
+    body.append(who);
+    c.append(gemSvg(), body); box.replaceChildren(c); return;
+  }
+  const c = el('div', 'rl-star empty');
+  const body = el('div');
+  body.append(el('h2', null, 'Diamond Deliverer: up for grabs'));
+  const best = [...M].sort((a, b) => b.top_weeks - a.top_weeks || b.perfect_streak - a.perfect_streak)[0];
+  body.append(el('div', 'sub', `Be #1 in your division 3 weeks in a row, or string together 10 perfect shifts.${best && (best.top_weeks || best.perfect_streak) ? ` Closest right now: ${best.rider} (${best.top_weeks ? `${best.top_weeks} week${best.top_weeks > 1 ? 's' : ''} at #1` : `${best.perfect_streak} perfect shifts in a row`}).` : ''}`));
+  c.append(gemSvg(), body); box.replaceChildren(c);
+}
+
+function drawPodium() {
+  const box = document.getElementById('podium');
+  const d = dash.data('league'); if (d.status !== 'ok') { fail(box, d.status); return; }
+  const top = rows().filter((r) => r.division === div && min3(r)).sort((a, b) => b.d_points_28d - a.d_points_28d).slice(0, 3);
+  if (!top.length) { box.replaceChildren(el('div', 'rl-note', 'No riders with 3+ shifts in this division yet.')); return; }
+  const metal = ['gold', 'silver', 'bronze'];
+  box.replaceChildren(...top.map((r, i) => {
+    const c = el('div', `rl-step mat mat-${metal[i]}`);
+    const w = `key=${encodeURIComponent(r.key)}`;
+    const n = el('div', 'rl-name', r.rider); n.dataset.source = 'league'; n.dataset.field = 'rider'; n.dataset.where = w;
+    const pts = el('div', 'rl-pts'); const v = el('span', null, fmtInt(r.d_points_28d)); v.dataset.source = 'league'; v.dataset.field = 'd_points_28d'; v.dataset.where = w; pts.append(v, document.createTextNode(' points'));
+    const q = div === 'D2D' ? (r.d_edw_28d != null ? ` · ${fmtPct(r.d_edw_28d)} EDW` : '') : (r.d_success_28d != null ? ` · ${fmtPct(r.d_success_28d)} delivered` : '');
+    c.append(el('div', 'rl-place', ['1st · Gold', '2nd · Silver', '3rd · Bronze'][i]), n, pts, el('div', 'sub', `${r.level} · ${fmtInt(r.d_delivered_28d)} parcels in ${r.d_shifts_28d} shifts${q}`));
+    return c;
+  }));
+}
+
+function drawBoard() {
+  const t = document.getElementById('board');
+  const b = BOARDS[div][board];
+  const th = document.getElementById('board-metric-th'); th.textContent = b.label; th.dataset.field = b.field;
+  document.getElementById('board-note').textContent = b.note;
+  const body = t.querySelector('tbody');
+  const d = dash.data('league'); if (d.status !== 'ok') { body.replaceChildren(); return; }
+  const list = rows().filter((r) => r.division === div).filter(b.keep).sort(b.sort);
+  body.replaceChildren(...list.map((r, i) => {
+    const tr = el('tr'); tr.dataset.key = r.key;
+    const c2 = el('td'); lvl(c2, r.level);
+    tr.append(el('td', 'rank', String(i + 1)), el('td', null, r.rider), c2, el('td', 'n', b.show(r)), el('td', 'n hide-sm', String(r.d_shifts_28d)));
+    return tr;
+  }));
+}
+
+function drawLadder() {
+  const box = document.getElementById('ladder');
+  const d = dash.data('league_levels'); if (d.status !== 'ok') { fail(box, dash.data('league').status); return; }
+  box.replaceChildren(...d.data.map((r) => {
+    const c = el('div', `rl-rung mat mat-${r.level}`);
+    const n = el('div', 'big', String(r.riders)); n.dataset.source = 'league_levels'; n.dataset.field = 'riders'; n.dataset.where = `level=${r.level}`;
+    c.append(el('b', null, r.level), n, el('div', 'req', `${r.riders === 1 ? 'rider' : 'riders'} · ${REQ[r.level]}`));
+    return c;
+  }));
+}
+
+function drawMilestones(kind) {
+  const isDays = kind === 'days';
+  const track = document.getElementById(`${kind}-track`), next = document.getElementById(`${kind}-next`);
+  const d = dash.data('league'); if (d.status !== 'ok') { fail(track, d.status); next.replaceChildren(); return; }
+  const MS = isDays ? DAY_MS : PARCEL_MS; const val = (r) => isDays ? r.days : r.delivered_all;
+  const M = main();
+  track.replaceChildren(...MS.map((m, i) => {
+    const reached = M.filter((r) => val(r) >= m);
+    const here = reached.filter((r) => i === MS.length - 1 || val(r) < MS[i + 1]).sort((a, b) => val(b) - val(a));
+    const c = el('div', 'rl-mile');
+    c.append(badgeEl(`${kind}:${m}`, true), el('div', 'cnt', String(reached.length)), el('div', 'lab', `${reached.length === 1 ? 'rider has' : 'riders have'} reached ${isDays ? `${m} days` : `${fmtInt(m)} parcels`}`));
+    if (here.length) c.append(el('div', 'names', here.map((r) => r.rider).join(', ')));
+    return c;
+  }));
+  const cand = M.map((r) => { const v = val(r); const nx = MS.find((m) => v < m); if (!nx || v <= 0) return null; const prev = [...MS].reverse().find((m) => v >= m) || 0; return { r, v, nx, frac: (v - prev) / (nx - prev), togo: nx - v }; })
+    .filter(Boolean).sort((a, b) => b.frac - a.frac || a.togo - b.togo).slice(0, 6);
+  next.replaceChildren(...cand.map((c) => {
+    const row = el('div', 'row'); const bar = el('div', 'rl-bar'); const fill = el('i'); fill.style.width = `${Math.max(3, Math.round(c.frac * 100))}%`; fill.style.background = dash.colors[isDays ? 2 : 0]; bar.append(fill);
+    row.append(el('span', null, c.r.rider), bar, el('span', 'togo', isDays ? `${c.togo} days to ${c.nx}` : `${fmtInt(c.togo)} to go to ${fmtInt(c.nx)}`));
+    return row;
+  }));
+}
+
+function drawBadgeLegend() {
+  const box = document.getElementById('badge-legend');
+  const items = [
+    ['tours:150', 'Tour medals', '10 · 25 · 50 · 100 · 150 · 250 tours'],
+    ['days:270', 'Days at PORT', '30 · 90 · 180 · 270 · 365 days'],
+    ['parcels:5000', 'Parcel shields', '1k · 2.5k · 5k · 10k parcels'],
+    ['perfect:10', 'Perfect stars', '5 · 10 · 25 · 50 perfect shifts'],
+    ['trainer:10', 'Trainer', '1 · 5 · 10 · 25 · 50 training shifts leading a new rider'],
+    ['champion:1', 'Weekly champion', '#1 in your division for a week (number = how many weeks)'],
+    ['streak:4', 'Streak flame', '4+ weeks in a row with a shift'],
+    ['earlybird', 'Early bird', 'Average check-in by 09:30 (3+ check-ins)'],
+    ['earlyout', 'Out by 11:30', 'Left the hub before 11:30 on 3+ shifts in 28 days'],
+    ['window', 'Window master', '95%+ on-time window (EDW)'],
+    ['photo', 'Photo pro', '98%+ photo compliance'],
+    ['diamond', 'Diamond Deliverer', '#1 three weeks running, or 10 perfect shifts in a row'],
+  ];
+  box.replaceChildren(...items.map(([code, title, text]) => { const r = el('div'); const t = el('span'); t.append(el('b', null, title), document.createTextNode(text)); r.append(badgeEl(code, true), t); return r; }));
+}
+
+function drawArrival() {
+  const box = document.getElementById('arrival');
+  const col = { D2D: dash.colors[0], OOH: dash.colors[1] };
+  document.getElementById('lg0').style.background = col.D2D; document.getElementById('lg1').style.background = col.OOH;
+  const d = dash.data('league'); if (d.status !== 'ok') { box.replaceChildren(); fail(box, d.status); return; }
+  const pts = rows().filter((r) => r.d_checkins_28d >= 2 && r.d_checkin_min_28d != null && r.d_rating_28d != null);
+  if (!pts.length) { box.replaceChildren(); return; }
+  const W = Math.max(280, box.clientWidth), H = 300, m = { t: 12, r: 16, b: 34, l: 40 };
+  const x = d3.scaleLinear(d3.extent(pts, (r) => r.d_checkin_min_28d).map((v, i) => v + (i ? 10 : -10)), [m.l, W - m.r]).nice();
+  const y = d3.scaleLinear([Math.min(60, d3.min(pts, (r) => r.d_rating_28d) ?? 60), 100], [H - m.b, m.t]).nice();
+  const svg = d3.create('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Arrival time against rating by division');
+  svg.append('g').selectAll('line').data(y.ticks(5)).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y).attr('stroke', 'var(--cds-chart-grid)');
+  const gx = svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(Math.max(3, Math.floor(W / 90))).tickFormat(hhmm).tickSizeOuter(0));
+  const gy = svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSizeOuter(0));
+  [gx, gy].forEach((g) => { g.attr('font-size', null).attr('font-family', null); g.selectAll('text').attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)'); g.selectAll('path,line').attr('stroke', 'var(--cds-chart-axis)'); });
+  if (x(570) > m.l && x(570) < W - m.r) {
+    svg.append('line').attr('x1', x(570)).attr('x2', x(570)).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 4');
+    svg.append('text').attr('x', x(570) + 4).attr('y', m.t + 10).attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').text('09:30');
+  }
+  const tip = el('div', 'rl-tip'); tip.hidden = true;
+  svg.append('g').selectAll('circle').data(pts).join('circle').attr('cx', (r) => x(r.d_checkin_min_28d)).attr('cy', (r) => y(r.d_rating_28d)).attr('r', 5)
+    .attr('fill', (r) => col[r.division]).attr('fill-opacity', .85).attr('stroke', 'var(--color-panel)')
+    .on('mouseenter', (ev, r) => {
+      tip.replaceChildren(el('div', 't', `${r.rider} · ${DIV[r.division]}`), document.createTextNode(`Check-in ${hhmm(r.d_checkin_min_28d)} · rating ${r.d_rating_28d}`));
+      tip.hidden = false; const k = box.clientWidth / W;
+      tip.style.left = `${Math.min(x(r.d_checkin_min_28d) * k + 10, box.clientWidth - 190)}px`; tip.style.top = `${Math.max(0, y(r.d_rating_28d) * k - 30)}px`;
+    })
+    .on('mouseleave', () => { tip.hidden = true; });
+  svg.append('text').attr('x', m.l).attr('y', H - 4).attr('fill', 'var(--color-fg-muted)').style('font-size', 'var(--cds-font-size-caption)').text('Average hub check-in →');
+  box.replaceChildren(svg.node(), tip);
+}
+
+function drawAll() {
+  const body = document.querySelector('#all tbody');
+  const d = dash.data('league'); if (d.status !== 'ok') { body.replaceChildren(); return; }
+  const q = search.value.trim().toLowerCase();
+  const list = main().filter((r) => !q || r.rider.toLowerCase().includes(q)).sort((a, b) => LEVELS.indexOf(b.level) - LEVELS.indexOf(a.level) || b.tours - a.tours);
+  body.replaceChildren(...list.map((r) => {
+    const tr = el('tr'); tr.dataset.key = r.key;
+    const cl = el('td'); lvl(cl, r.level);
+    const bd = el('td'); bd.append(badgeRow(r.badge_codes));
+    tr.append(el('td', null, r.rider), cl, el('td', 'hide-sm', DIV[r.pathway] || r.pathway), el('td', 'n', String(r.tours)), el('td', 'n hide-sm', String(r.days)), el('td', 'n', r.rating_all == null ? '' : String(r.rating_all)), bd, el('td', null, r.next_goal || ''));
+    return tr;
+  }));
+}
+
+drawTabs();
+drawBadgeLegend();
+dash.onData(() => { drawTakeaway(); drawDiamond(); drawPodium(); drawBoard(); drawLadder(); drawMilestones('days'); drawMilestones('parcels'); drawArrival(); drawAll(); });
+</script>
+
+</div>
+</body>
+</html>
