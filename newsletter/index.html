@@ -141,6 +141,7 @@ a:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offse
       s.append(c); m.append(s);
     }
     if (issue.welcome && issue.welcome.length) { const s = sec('Welcome to the road'); s.append(E('p', null, `First solo shifts this week: ${issue.welcome.join(', ')}. Great start!`)); m.append(s); }
+    (issue.notes || []).forEach((n) => { const s = sec(n.title); s.append(E('p', null, n.text)); m.append(s); });
     if (issue.tip) { const s = sec('Tip of the week'); const t = E('div', 'tip'); t.append(E('h3', null, issue.tip.title), E('p', null, issue.tip.text)); s.append(t); m.append(s); }
     if (issue.book && issue.book.length) {
       const s = sec('The record book'); const w = E('div', 'book');
