@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PORT Rider League</title>
+<title>PORT Rider LeagueBoard</title>
 <meta name="description" content="Points, levels and badges for PORT riders, updated before 9am and after the evening de-brief.">
 <meta name="theme-color" content="#161b2d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Rider League">
+<meta name="apple-mobile-web-app-title" content="LeagueBoard">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="robots" content="noindex, nofollow">
 <link rel="manifest" href="manifest.webmanifest">
@@ -73,7 +73,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     el.classList.toggle('stale', hrs > 36);
   }
   /* App updates: if a newer version of this page is online, reload into it (no reinstall needed). */
-  window.APP_VERSION = '2026-10-18f';
+  window.APP_VERSION = '2026-10-18g';
   let checking = false;
   async function checkUpdate() {
     if (checking) return; checking = true;
@@ -88,13 +88,13 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
   }
   /* Share the app with new joiners */
   const SHARE_URL = 'https://obiportninja.github.io/PORT-RIDER-LEAGUEBOARD/';
-  const SHARE_TEXT = 'PORT Rider League: points, leaderboards, tour dungeons and badges for PORT riders. Open the link, then add it to your home screen.';
+  const SHARE_TEXT = 'PORT Rider LeagueBoard: points, leaderboards, tour dungeons and badges for PORT riders. Open the link, then add it to your home screen.';
   function initShare() {
     const dlg = document.getElementById('share-dlg'); const btn = document.getElementById('app-share'); if (!dlg || !btn) return;
     const input = document.getElementById('share-url'); const done = document.getElementById('share-done');
     input.value = SHARE_URL;
     const nat = document.getElementById('share-native');
-    if (navigator.share) { nat.hidden = false; nat.addEventListener('click', async () => { try { await navigator.share({ title: 'PORT Rider League', text: SHARE_TEXT, url: SHARE_URL }); done.textContent = 'Shared.'; } catch (e) {} }); }
+    if (navigator.share) { nat.hidden = false; nat.addEventListener('click', async () => { try { await navigator.share({ title: 'PORT Rider LeagueBoard', text: SHARE_TEXT, url: SHARE_URL }); done.textContent = 'Shared.'; } catch (e) {} }); }
     document.getElementById('share-copy').addEventListener('click', async () => {
       let ok = false;
       try { await navigator.clipboard.writeText(SHARE_URL); ok = true; } catch (e) {}
@@ -153,15 +153,15 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 </head>
 <body>
 <div class="app-bar"><span id="app-updated">Loading…</span><span class="btns"><button id="app-share" type="button" aria-haspopup="dialog">Share</button><button id="app-refresh" type="button">Refresh</button></span></div>
-<div class="install-bar" id="install-bar" role="region" aria-label="Install the app" hidden><img src="icons/icon-192.png" alt=""><span>Add Rider League to your home screen</span><button class="go" id="install-go" type="button">Install</button><button class="x" id="install-x" type="button" aria-label="Not now">×</button></div>
+<div class="install-bar" id="install-bar" role="region" aria-label="Install the app" hidden><img src="icons/icon-192.png" alt=""><span>Add the LeagueBoard to your home screen</span><button class="go" id="install-go" type="button">Install</button><button class="x" id="install-x" type="button" aria-label="Not now">×</button></div>
 <dialog class="share-dlg" id="share-dlg" aria-labelledby="share-h">
   <div class="in">
-    <h2 id="share-h">Share the Rider League</h2>
+    <h2 id="share-h">Share the LeagueBoard</h2>
     <p>Send this link to new riders. It opens on any phone, with no login.</p>
-    <div class="row"><input id="share-url" type="text" readonly aria-label="Rider League link"><button class="primary" id="share-copy" type="button">Copy link</button></div>
+    <div class="row"><input id="share-url" type="text" readonly aria-label="LeagueBoard link"><button class="primary" id="share-copy" type="button">Copy link</button></div>
     <button id="share-native" type="button" hidden>Share via WhatsApp, text…</button>
     <div class="done" id="share-done" role="status" aria-live="polite"></div>
-    <div class="qr"><svg viewBox="0 0 37 37" width="200" height="200" role="img" aria-label="QR code for the Rider League link" shape-rendering="crispEdges"><rect width="37" height="37" fill="#fff"/><path d="M2,2h1v1h-1zM3,2h1v1h-1zM4,2h1v1h-1zM5,2h1v1h-1zM6,2h1v1h-1zM7,2h1v1h-1zM8,2h1v1h-1zM12,2h1v1h-1zM15,2h1v1h-1zM16,2h1v1h-1zM19,2h1v1h-1zM20,2h1v1h-1zM23,2h1v1h-1zM28,2h1v1h-1zM29,2h1v1h-1zM30,2h1v1h-1zM31,2h1v1h-1zM32,2h1v1h-1zM33,2h1v1h-1zM34,2h1v1h-1zM2,3h1v1h-1zM8,3h1v1h-1zM10,3h1v1h-1zM18,3h1v1h-1zM20,3h1v1h-1zM28,3h1v1h-1zM34,3h1v1h-1zM2,4h1v1h-1zM4,4h1v1h-1zM5,4h1v1h-1zM6,4h1v1h-1zM8,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM16,4h1v1h-1zM17,4h1v1h-1zM21,4h1v1h-1zM22,4h1v1h-1zM25,4h1v1h-1zM28,4h1v1h-1zM30,4h1v1h-1zM31,4h1v1h-1zM32,4h1v1h-1zM34,4h1v1h-1zM2,5h1v1h-1zM4,5h1v1h-1zM5,5h1v1h-1zM6,5h1v1h-1zM8,5h1v1h-1zM10,5h1v1h-1zM16,5h1v1h-1zM17,5h1v1h-1zM18,5h1v1h-1zM20,5h1v1h-1zM21,5h1v1h-1zM22,5h1v1h-1zM23,5h1v1h-1zM25,5h1v1h-1zM26,5h1v1h-1zM28,5h1v1h-1zM30,5h1v1h-1zM31,5h1v1h-1zM32,5h1v1h-1zM34,5h1v1h-1zM2,6h1v1h-1zM4,6h1v1h-1zM5,6h1v1h-1zM6,6h1v1h-1zM8,6h1v1h-1zM13,6h1v1h-1zM15,6h1v1h-1zM16,6h1v1h-1zM17,6h1v1h-1zM18,6h1v1h-1zM22,6h1v1h-1zM23,6h1v1h-1zM28,6h1v1h-1zM30,6h1v1h-1zM31,6h1v1h-1zM32,6h1v1h-1zM34,6h1v1h-1zM2,7h1v1h-1zM8,7h1v1h-1zM11,7h1v1h-1zM12,7h1v1h-1zM13,7h1v1h-1zM14,7h1v1h-1zM15,7h1v1h-1zM16,7h1v1h-1zM17,7h1v1h-1zM19,7h1v1h-1zM21,7h1v1h-1zM23,7h1v1h-1zM26,7h1v1h-1zM28,7h1v1h-1zM34,7h1v1h-1zM2,8h1v1h-1zM3,8h1v1h-1zM4,8h1v1h-1zM5,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM16,8h1v1h-1zM18,8h1v1h-1zM20,8h1v1h-1zM22,8h1v1h-1zM24,8h1v1h-1zM26,8h1v1h-1zM28,8h1v1h-1zM29,8h1v1h-1zM30,8h1v1h-1zM31,8h1v1h-1zM32,8h1v1h-1zM33,8h1v1h-1zM34,8h1v1h-1zM10,9h1v1h-1zM11,9h1v1h-1zM13,9h1v1h-1zM14,9h1v1h-1zM16,9h1v1h-1zM17,9h1v1h-1zM18,9h1v1h-1zM21,9h1v1h-1zM22,9h1v1h-1zM2,10h1v1h-1zM8,10h1v1h-1zM10,10h1v1h-1zM12,10h1v1h-1zM13,10h1v1h-1zM14,10h1v1h-1zM15,10h1v1h-1zM19,10h1v1h-1zM21,10h1v1h-1zM24,10h1v1h-1zM26,10h1v1h-1zM27,10h1v1h-1zM28,10h1v1h-1zM31,10h1v1h-1zM32,10h1v1h-1zM33,10h1v1h-1zM2,11h1v1h-1zM3,11h1v1h-1zM4,11h1v1h-1zM5,11h1v1h-1zM10,11h1v1h-1zM12,11h1v1h-1zM15,11h1v1h-1zM16,11h1v1h-1zM17,11h1v1h-1zM19,11h1v1h-1zM20,11h1v1h-1zM21,11h1v1h-1zM22,11h1v1h-1zM25,11h1v1h-1zM30,11h1v1h-1zM31,11h1v1h-1zM32,11h1v1h-1zM34,11h1v1h-1zM4,12h1v1h-1zM6,12h1v1h-1zM7,12h1v1h-1zM8,12h1v1h-1zM10,12h1v1h-1zM11,12h1v1h-1zM15,12h1v1h-1zM16,12h1v1h-1zM17,12h1v1h-1zM19,12h1v1h-1zM22,12h1v1h-1zM24,12h1v1h-1zM26,12h1v1h-1zM28,12h1v1h-1zM30,12h1v1h-1zM32,12h1v1h-1zM34,12h1v1h-1zM2,13h1v1h-1zM5,13h1v1h-1zM6,13h1v1h-1zM10,13h1v1h-1zM11,13h1v1h-1zM12,13h1v1h-1zM13,13h1v1h-1zM15,13h1v1h-1zM17,13h1v1h-1zM18,13h1v1h-1zM19,13h1v1h-1zM20,13h1v1h-1zM24,13h1v1h-1zM26,13h1v1h-1zM27,13h1v1h-1zM29,13h1v1h-1zM30,13h1v1h-1zM31,13h1v1h-1zM32,13h1v1h-1zM2,14h1v1h-1zM3,14h1v1h-1zM7,14h1v1h-1zM8,14h1v1h-1zM11,14h1v1h-1zM15,14h1v1h-1zM19,14h1v1h-1zM21,14h1v1h-1zM25,14h1v1h-1zM33,14h1v1h-1zM2,15h1v1h-1zM5,15h1v1h-1zM7,15h1v1h-1zM9,15h1v1h-1zM10,15h1v1h-1zM12,15h1v1h-1zM13,15h1v1h-1zM19,15h1v1h-1zM20,15h1v1h-1zM24,15h1v1h-1zM27,15h1v1h-1zM29,15h1v1h-1zM33,15h1v1h-1zM34,15h1v1h-1zM4,16h1v1h-1zM6,16h1v1h-1zM8,16h1v1h-1zM9,16h1v1h-1zM10,16h1v1h-1zM13,16h1v1h-1zM14,16h1v1h-1zM17,16h1v1h-1zM18,16h1v1h-1zM20,16h1v1h-1zM22,16h1v1h-1zM23,16h1v1h-1zM24,16h1v1h-1zM27,16h1v1h-1zM28,16h1v1h-1zM33,16h1v1h-1zM2,17h1v1h-1zM3,17h1v1h-1zM6,17h1v1h-1zM13,17h1v1h-1zM18,17h1v1h-1zM22,17h1v1h-1zM24,17h1v1h-1zM27,17h1v1h-1zM29,17h1v1h-1zM30,17h1v1h-1zM31,17h1v1h-1zM32,17h1v1h-1zM34,17h1v1h-1zM4,18h1v1h-1zM5,18h1v1h-1zM6,18h1v1h-1zM8,18h1v1h-1zM9,18h1v1h-1zM10,18h1v1h-1zM11,18h1v1h-1zM17,18h1v1h-1zM19,18h1v1h-1zM24,18h1v1h-1zM27,18h1v1h-1zM29,18h1v1h-1zM30,18h1v1h-1zM31,18h1v1h-1zM34,18h1v1h-1zM2,19h1v1h-1zM4,19h1v1h-1zM7,19h1v1h-1zM9,19h1v1h-1zM10,19h1v1h-1zM11,19h1v1h-1zM12,19h1v1h-1zM13,19h1v1h-1zM15,19h1v1h-1zM16,19h1v1h-1zM17,19h1v1h-1zM21,19h1v1h-1zM22,19h1v1h-1zM25,19h1v1h-1zM28,19h1v1h-1zM31,19h1v1h-1zM32,19h1v1h-1zM34,19h1v1h-1zM5,20h1v1h-1zM8,20h1v1h-1zM9,20h1v1h-1zM10,20h1v1h-1zM14,20h1v1h-1zM16,20h1v1h-1zM17,20h1v1h-1zM18,20h1v1h-1zM19,20h1v1h-1zM20,20h1v1h-1zM21,20h1v1h-1zM22,20h1v1h-1zM23,20h1v1h-1zM25,20h1v1h-1zM27,20h1v1h-1zM28,20h1v1h-1zM29,20h1v1h-1zM31,20h1v1h-1zM32,20h1v1h-1zM33,20h1v1h-1zM3,21h1v1h-1zM4,21h1v1h-1zM6,21h1v1h-1zM7,21h1v1h-1zM10,21h1v1h-1zM11,21h1v1h-1zM12,21h1v1h-1zM13,21h1v1h-1zM14,21h1v1h-1zM17,21h1v1h-1zM21,21h1v1h-1zM24,21h1v1h-1zM26,21h1v1h-1zM30,21h1v1h-1zM31,21h1v1h-1zM32,21h1v1h-1zM33,21h1v1h-1zM34,21h1v1h-1zM3,22h1v1h-1zM4,22h1v1h-1zM7,22h1v1h-1zM8,22h1v1h-1zM9,22h1v1h-1zM12,22h1v1h-1zM13,22h1v1h-1zM14,22h1v1h-1zM17,22h1v1h-1zM20,22h1v1h-1zM21,22h1v1h-1zM25,22h1v1h-1zM27,22h1v1h-1zM28,22h1v1h-1zM29,22h1v1h-1zM30,22h1v1h-1zM31,22h1v1h-1zM33,22h1v1h-1zM2,23h1v1h-1zM3,23h1v1h-1zM5,23h1v1h-1zM6,23h1v1h-1zM10,23h1v1h-1zM11,23h1v1h-1zM14,23h1v1h-1zM15,23h1v1h-1zM16,23h1v1h-1zM23,23h1v1h-1zM26,23h1v1h-1zM31,23h1v1h-1zM32,23h1v1h-1zM2,24h1v1h-1zM8,24h1v1h-1zM9,24h1v1h-1zM10,24h1v1h-1zM16,24h1v1h-1zM21,24h1v1h-1zM24,24h1v1h-1zM25,24h1v1h-1zM26,24h1v1h-1zM27,24h1v1h-1zM28,24h1v1h-1zM29,24h1v1h-1zM31,24h1v1h-1zM32,24h1v1h-1zM33,24h1v1h-1zM2,25h1v1h-1zM5,25h1v1h-1zM6,25h1v1h-1zM14,25h1v1h-1zM16,25h1v1h-1zM17,25h1v1h-1zM18,25h1v1h-1zM20,25h1v1h-1zM21,25h1v1h-1zM22,25h1v1h-1zM25,25h1v1h-1zM27,25h1v1h-1zM28,25h1v1h-1zM30,25h1v1h-1zM32,25h1v1h-1zM34,25h1v1h-1zM2,26h1v1h-1zM3,26h1v1h-1zM4,26h1v1h-1zM5,26h1v1h-1zM6,26h1v1h-1zM7,26h1v1h-1zM8,26h1v1h-1zM10,26h1v1h-1zM11,26h1v1h-1zM12,26h1v1h-1zM13,26h1v1h-1zM16,26h1v1h-1zM18,26h1v1h-1zM22,26h1v1h-1zM26,26h1v1h-1zM27,26h1v1h-1zM28,26h1v1h-1zM29,26h1v1h-1zM30,26h1v1h-1zM31,26h1v1h-1zM32,26h1v1h-1zM10,27h1v1h-1zM11,27h1v1h-1zM14,27h1v1h-1zM16,27h1v1h-1zM17,27h1v1h-1zM18,27h1v1h-1zM19,27h1v1h-1zM20,27h1v1h-1zM21,27h1v1h-1zM22,27h1v1h-1zM23,27h1v1h-1zM26,27h1v1h-1zM30,27h1v1h-1zM32,27h1v1h-1zM2,28h1v1h-1zM3,28h1v1h-1zM4,28h1v1h-1zM5,28h1v1h-1zM6,28h1v1h-1zM7,28h1v1h-1zM8,28h1v1h-1zM11,28h1v1h-1zM12,28h1v1h-1zM14,28h1v1h-1zM15,28h1v1h-1zM16,28h1v1h-1zM17,28h1v1h-1zM18,28h1v1h-1zM19,28h1v1h-1zM25,28h1v1h-1zM26,28h1v1h-1zM28,28h1v1h-1zM30,28h1v1h-1zM32,28h1v1h-1zM33,28h1v1h-1zM34,28h1v1h-1zM2,29h1v1h-1zM8,29h1v1h-1zM11,29h1v1h-1zM13,29h1v1h-1zM14,29h1v1h-1zM16,29h1v1h-1zM19,29h1v1h-1zM20,29h1v1h-1zM21,29h1v1h-1zM24,29h1v1h-1zM25,29h1v1h-1zM26,29h1v1h-1zM30,29h1v1h-1zM31,29h1v1h-1zM32,29h1v1h-1zM34,29h1v1h-1zM2,30h1v1h-1zM4,30h1v1h-1zM5,30h1v1h-1zM6,30h1v1h-1zM8,30h1v1h-1zM11,30h1v1h-1zM12,30h1v1h-1zM14,30h1v1h-1zM17,30h1v1h-1zM18,30h1v1h-1zM21,30h1v1h-1zM23,30h1v1h-1zM26,30h1v1h-1zM27,30h1v1h-1zM28,30h1v1h-1zM29,30h1v1h-1zM30,30h1v1h-1zM31,30h1v1h-1zM2,31h1v1h-1zM4,31h1v1h-1zM5,31h1v1h-1zM6,31h1v1h-1zM8,31h1v1h-1zM11,31h1v1h-1zM19,31h1v1h-1zM20,31h1v1h-1zM23,31h1v1h-1zM27,31h1v1h-1zM29,31h1v1h-1zM30,31h1v1h-1zM33,31h1v1h-1zM2,32h1v1h-1zM4,32h1v1h-1zM5,32h1v1h-1zM6,32h1v1h-1zM8,32h1v1h-1zM11,32h1v1h-1zM12,32h1v1h-1zM13,32h1v1h-1zM15,32h1v1h-1zM16,32h1v1h-1zM17,32h1v1h-1zM19,32h1v1h-1zM20,32h1v1h-1zM21,32h1v1h-1zM22,32h1v1h-1zM23,32h1v1h-1zM24,32h1v1h-1zM25,32h1v1h-1zM26,32h1v1h-1zM27,32h1v1h-1zM29,32h1v1h-1zM30,32h1v1h-1zM31,32h1v1h-1zM33,32h1v1h-1zM34,32h1v1h-1zM2,33h1v1h-1zM8,33h1v1h-1zM11,33h1v1h-1zM16,33h1v1h-1zM20,33h1v1h-1zM24,33h1v1h-1zM26,33h1v1h-1zM27,33h1v1h-1zM28,33h1v1h-1zM29,33h1v1h-1zM30,33h1v1h-1zM31,33h1v1h-1zM32,33h1v1h-1zM2,34h1v1h-1zM3,34h1v1h-1zM4,34h1v1h-1zM5,34h1v1h-1zM6,34h1v1h-1zM7,34h1v1h-1zM8,34h1v1h-1zM10,34h1v1h-1zM11,34h1v1h-1zM12,34h1v1h-1zM15,34h1v1h-1zM17,34h1v1h-1zM18,34h1v1h-1zM19,34h1v1h-1zM24,34h1v1h-1zM25,34h1v1h-1zM27,34h1v1h-1zM28,34h1v1h-1zM29,34h1v1h-1zM33,34h1v1h-1z" fill="#111"/></svg><span>Or let them scan this in the hub</span></div>
+    <div class="qr"><svg viewBox="0 0 37 37" width="200" height="200" role="img" aria-label="QR code for the LeagueBoard link" shape-rendering="crispEdges"><rect width="37" height="37" fill="#fff"/><path d="M2,2h1v1h-1zM3,2h1v1h-1zM4,2h1v1h-1zM5,2h1v1h-1zM6,2h1v1h-1zM7,2h1v1h-1zM8,2h1v1h-1zM12,2h1v1h-1zM15,2h1v1h-1zM16,2h1v1h-1zM19,2h1v1h-1zM20,2h1v1h-1zM23,2h1v1h-1zM28,2h1v1h-1zM29,2h1v1h-1zM30,2h1v1h-1zM31,2h1v1h-1zM32,2h1v1h-1zM33,2h1v1h-1zM34,2h1v1h-1zM2,3h1v1h-1zM8,3h1v1h-1zM10,3h1v1h-1zM18,3h1v1h-1zM20,3h1v1h-1zM28,3h1v1h-1zM34,3h1v1h-1zM2,4h1v1h-1zM4,4h1v1h-1zM5,4h1v1h-1zM6,4h1v1h-1zM8,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM16,4h1v1h-1zM17,4h1v1h-1zM21,4h1v1h-1zM22,4h1v1h-1zM25,4h1v1h-1zM28,4h1v1h-1zM30,4h1v1h-1zM31,4h1v1h-1zM32,4h1v1h-1zM34,4h1v1h-1zM2,5h1v1h-1zM4,5h1v1h-1zM5,5h1v1h-1zM6,5h1v1h-1zM8,5h1v1h-1zM10,5h1v1h-1zM16,5h1v1h-1zM17,5h1v1h-1zM18,5h1v1h-1zM20,5h1v1h-1zM21,5h1v1h-1zM22,5h1v1h-1zM23,5h1v1h-1zM25,5h1v1h-1zM26,5h1v1h-1zM28,5h1v1h-1zM30,5h1v1h-1zM31,5h1v1h-1zM32,5h1v1h-1zM34,5h1v1h-1zM2,6h1v1h-1zM4,6h1v1h-1zM5,6h1v1h-1zM6,6h1v1h-1zM8,6h1v1h-1zM13,6h1v1h-1zM15,6h1v1h-1zM16,6h1v1h-1zM17,6h1v1h-1zM18,6h1v1h-1zM22,6h1v1h-1zM23,6h1v1h-1zM28,6h1v1h-1zM30,6h1v1h-1zM31,6h1v1h-1zM32,6h1v1h-1zM34,6h1v1h-1zM2,7h1v1h-1zM8,7h1v1h-1zM11,7h1v1h-1zM12,7h1v1h-1zM13,7h1v1h-1zM14,7h1v1h-1zM15,7h1v1h-1zM16,7h1v1h-1zM17,7h1v1h-1zM19,7h1v1h-1zM21,7h1v1h-1zM23,7h1v1h-1zM26,7h1v1h-1zM28,7h1v1h-1zM34,7h1v1h-1zM2,8h1v1h-1zM3,8h1v1h-1zM4,8h1v1h-1zM5,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM16,8h1v1h-1zM18,8h1v1h-1zM20,8h1v1h-1zM22,8h1v1h-1zM24,8h1v1h-1zM26,8h1v1h-1zM28,8h1v1h-1zM29,8h1v1h-1zM30,8h1v1h-1zM31,8h1v1h-1zM32,8h1v1h-1zM33,8h1v1h-1zM34,8h1v1h-1zM10,9h1v1h-1zM11,9h1v1h-1zM13,9h1v1h-1zM14,9h1v1h-1zM16,9h1v1h-1zM17,9h1v1h-1zM18,9h1v1h-1zM21,9h1v1h-1zM22,9h1v1h-1zM2,10h1v1h-1zM8,10h1v1h-1zM10,10h1v1h-1zM12,10h1v1h-1zM13,10h1v1h-1zM14,10h1v1h-1zM15,10h1v1h-1zM19,10h1v1h-1zM21,10h1v1h-1zM24,10h1v1h-1zM26,10h1v1h-1zM27,10h1v1h-1zM28,10h1v1h-1zM31,10h1v1h-1zM32,10h1v1h-1zM33,10h1v1h-1zM2,11h1v1h-1zM3,11h1v1h-1zM4,11h1v1h-1zM5,11h1v1h-1zM10,11h1v1h-1zM12,11h1v1h-1zM15,11h1v1h-1zM16,11h1v1h-1zM17,11h1v1h-1zM19,11h1v1h-1zM20,11h1v1h-1zM21,11h1v1h-1zM22,11h1v1h-1zM25,11h1v1h-1zM30,11h1v1h-1zM31,11h1v1h-1zM32,11h1v1h-1zM34,11h1v1h-1zM4,12h1v1h-1zM6,12h1v1h-1zM7,12h1v1h-1zM8,12h1v1h-1zM10,12h1v1h-1zM11,12h1v1h-1zM15,12h1v1h-1zM16,12h1v1h-1zM17,12h1v1h-1zM19,12h1v1h-1zM22,12h1v1h-1zM24,12h1v1h-1zM26,12h1v1h-1zM28,12h1v1h-1zM30,12h1v1h-1zM32,12h1v1h-1zM34,12h1v1h-1zM2,13h1v1h-1zM5,13h1v1h-1zM6,13h1v1h-1zM10,13h1v1h-1zM11,13h1v1h-1zM12,13h1v1h-1zM13,13h1v1h-1zM15,13h1v1h-1zM17,13h1v1h-1zM18,13h1v1h-1zM19,13h1v1h-1zM20,13h1v1h-1zM24,13h1v1h-1zM26,13h1v1h-1zM27,13h1v1h-1zM29,13h1v1h-1zM30,13h1v1h-1zM31,13h1v1h-1zM32,13h1v1h-1zM2,14h1v1h-1zM3,14h1v1h-1zM7,14h1v1h-1zM8,14h1v1h-1zM11,14h1v1h-1zM15,14h1v1h-1zM19,14h1v1h-1zM21,14h1v1h-1zM25,14h1v1h-1zM33,14h1v1h-1zM2,15h1v1h-1zM5,15h1v1h-1zM7,15h1v1h-1zM9,15h1v1h-1zM10,15h1v1h-1zM12,15h1v1h-1zM13,15h1v1h-1zM19,15h1v1h-1zM20,15h1v1h-1zM24,15h1v1h-1zM27,15h1v1h-1zM29,15h1v1h-1zM33,15h1v1h-1zM34,15h1v1h-1zM4,16h1v1h-1zM6,16h1v1h-1zM8,16h1v1h-1zM9,16h1v1h-1zM10,16h1v1h-1zM13,16h1v1h-1zM14,16h1v1h-1zM17,16h1v1h-1zM18,16h1v1h-1zM20,16h1v1h-1zM22,16h1v1h-1zM23,16h1v1h-1zM24,16h1v1h-1zM27,16h1v1h-1zM28,16h1v1h-1zM33,16h1v1h-1zM2,17h1v1h-1zM3,17h1v1h-1zM6,17h1v1h-1zM13,17h1v1h-1zM18,17h1v1h-1zM22,17h1v1h-1zM24,17h1v1h-1zM27,17h1v1h-1zM29,17h1v1h-1zM30,17h1v1h-1zM31,17h1v1h-1zM32,17h1v1h-1zM34,17h1v1h-1zM4,18h1v1h-1zM5,18h1v1h-1zM6,18h1v1h-1zM8,18h1v1h-1zM9,18h1v1h-1zM10,18h1v1h-1zM11,18h1v1h-1zM17,18h1v1h-1zM19,18h1v1h-1zM24,18h1v1h-1zM27,18h1v1h-1zM29,18h1v1h-1zM30,18h1v1h-1zM31,18h1v1h-1zM34,18h1v1h-1zM2,19h1v1h-1zM4,19h1v1h-1zM7,19h1v1h-1zM9,19h1v1h-1zM10,19h1v1h-1zM11,19h1v1h-1zM12,19h1v1h-1zM13,19h1v1h-1zM15,19h1v1h-1zM16,19h1v1h-1zM17,19h1v1h-1zM21,19h1v1h-1zM22,19h1v1h-1zM25,19h1v1h-1zM28,19h1v1h-1zM31,19h1v1h-1zM32,19h1v1h-1zM34,19h1v1h-1zM5,20h1v1h-1zM8,20h1v1h-1zM9,20h1v1h-1zM10,20h1v1h-1zM14,20h1v1h-1zM16,20h1v1h-1zM17,20h1v1h-1zM18,20h1v1h-1zM19,20h1v1h-1zM20,20h1v1h-1zM21,20h1v1h-1zM22,20h1v1h-1zM23,20h1v1h-1zM25,20h1v1h-1zM27,20h1v1h-1zM28,20h1v1h-1zM29,20h1v1h-1zM31,20h1v1h-1zM32,20h1v1h-1zM33,20h1v1h-1zM3,21h1v1h-1zM4,21h1v1h-1zM6,21h1v1h-1zM7,21h1v1h-1zM10,21h1v1h-1zM11,21h1v1h-1zM12,21h1v1h-1zM13,21h1v1h-1zM14,21h1v1h-1zM17,21h1v1h-1zM21,21h1v1h-1zM24,21h1v1h-1zM26,21h1v1h-1zM30,21h1v1h-1zM31,21h1v1h-1zM32,21h1v1h-1zM33,21h1v1h-1zM34,21h1v1h-1zM3,22h1v1h-1zM4,22h1v1h-1zM7,22h1v1h-1zM8,22h1v1h-1zM9,22h1v1h-1zM12,22h1v1h-1zM13,22h1v1h-1zM14,22h1v1h-1zM17,22h1v1h-1zM20,22h1v1h-1zM21,22h1v1h-1zM25,22h1v1h-1zM27,22h1v1h-1zM28,22h1v1h-1zM29,22h1v1h-1zM30,22h1v1h-1zM31,22h1v1h-1zM33,22h1v1h-1zM2,23h1v1h-1zM3,23h1v1h-1zM5,23h1v1h-1zM6,23h1v1h-1zM10,23h1v1h-1zM11,23h1v1h-1zM14,23h1v1h-1zM15,23h1v1h-1zM16,23h1v1h-1zM23,23h1v1h-1zM26,23h1v1h-1zM31,23h1v1h-1zM32,23h1v1h-1zM2,24h1v1h-1zM8,24h1v1h-1zM9,24h1v1h-1zM10,24h1v1h-1zM16,24h1v1h-1zM21,24h1v1h-1zM24,24h1v1h-1zM25,24h1v1h-1zM26,24h1v1h-1zM27,24h1v1h-1zM28,24h1v1h-1zM29,24h1v1h-1zM31,24h1v1h-1zM32,24h1v1h-1zM33,24h1v1h-1zM2,25h1v1h-1zM5,25h1v1h-1zM6,25h1v1h-1zM14,25h1v1h-1zM16,25h1v1h-1zM17,25h1v1h-1zM18,25h1v1h-1zM20,25h1v1h-1zM21,25h1v1h-1zM22,25h1v1h-1zM25,25h1v1h-1zM27,25h1v1h-1zM28,25h1v1h-1zM30,25h1v1h-1zM32,25h1v1h-1zM34,25h1v1h-1zM2,26h1v1h-1zM3,26h1v1h-1zM4,26h1v1h-1zM5,26h1v1h-1zM6,26h1v1h-1zM7,26h1v1h-1zM8,26h1v1h-1zM10,26h1v1h-1zM11,26h1v1h-1zM12,26h1v1h-1zM13,26h1v1h-1zM16,26h1v1h-1zM18,26h1v1h-1zM22,26h1v1h-1zM26,26h1v1h-1zM27,26h1v1h-1zM28,26h1v1h-1zM29,26h1v1h-1zM30,26h1v1h-1zM31,26h1v1h-1zM32,26h1v1h-1zM10,27h1v1h-1zM11,27h1v1h-1zM14,27h1v1h-1zM16,27h1v1h-1zM17,27h1v1h-1zM18,27h1v1h-1zM19,27h1v1h-1zM20,27h1v1h-1zM21,27h1v1h-1zM22,27h1v1h-1zM23,27h1v1h-1zM26,27h1v1h-1zM30,27h1v1h-1zM32,27h1v1h-1zM2,28h1v1h-1zM3,28h1v1h-1zM4,28h1v1h-1zM5,28h1v1h-1zM6,28h1v1h-1zM7,28h1v1h-1zM8,28h1v1h-1zM11,28h1v1h-1zM12,28h1v1h-1zM14,28h1v1h-1zM15,28h1v1h-1zM16,28h1v1h-1zM17,28h1v1h-1zM18,28h1v1h-1zM19,28h1v1h-1zM25,28h1v1h-1zM26,28h1v1h-1zM28,28h1v1h-1zM30,28h1v1h-1zM32,28h1v1h-1zM33,28h1v1h-1zM34,28h1v1h-1zM2,29h1v1h-1zM8,29h1v1h-1zM11,29h1v1h-1zM13,29h1v1h-1zM14,29h1v1h-1zM16,29h1v1h-1zM19,29h1v1h-1zM20,29h1v1h-1zM21,29h1v1h-1zM24,29h1v1h-1zM25,29h1v1h-1zM26,29h1v1h-1zM30,29h1v1h-1zM31,29h1v1h-1zM32,29h1v1h-1zM34,29h1v1h-1zM2,30h1v1h-1zM4,30h1v1h-1zM5,30h1v1h-1zM6,30h1v1h-1zM8,30h1v1h-1zM11,30h1v1h-1zM12,30h1v1h-1zM14,30h1v1h-1zM17,30h1v1h-1zM18,30h1v1h-1zM21,30h1v1h-1zM23,30h1v1h-1zM26,30h1v1h-1zM27,30h1v1h-1zM28,30h1v1h-1zM29,30h1v1h-1zM30,30h1v1h-1zM31,30h1v1h-1zM2,31h1v1h-1zM4,31h1v1h-1zM5,31h1v1h-1zM6,31h1v1h-1zM8,31h1v1h-1zM11,31h1v1h-1zM19,31h1v1h-1zM20,31h1v1h-1zM23,31h1v1h-1zM27,31h1v1h-1zM29,31h1v1h-1zM30,31h1v1h-1zM33,31h1v1h-1zM2,32h1v1h-1zM4,32h1v1h-1zM5,32h1v1h-1zM6,32h1v1h-1zM8,32h1v1h-1zM11,32h1v1h-1zM12,32h1v1h-1zM13,32h1v1h-1zM15,32h1v1h-1zM16,32h1v1h-1zM17,32h1v1h-1zM19,32h1v1h-1zM20,32h1v1h-1zM21,32h1v1h-1zM22,32h1v1h-1zM23,32h1v1h-1zM24,32h1v1h-1zM25,32h1v1h-1zM26,32h1v1h-1zM27,32h1v1h-1zM29,32h1v1h-1zM30,32h1v1h-1zM31,32h1v1h-1zM33,32h1v1h-1zM34,32h1v1h-1zM2,33h1v1h-1zM8,33h1v1h-1zM11,33h1v1h-1zM16,33h1v1h-1zM20,33h1v1h-1zM24,33h1v1h-1zM26,33h1v1h-1zM27,33h1v1h-1zM28,33h1v1h-1zM29,33h1v1h-1zM30,33h1v1h-1zM31,33h1v1h-1zM32,33h1v1h-1zM2,34h1v1h-1zM3,34h1v1h-1zM4,34h1v1h-1zM5,34h1v1h-1zM6,34h1v1h-1zM7,34h1v1h-1zM8,34h1v1h-1zM10,34h1v1h-1zM11,34h1v1h-1zM12,34h1v1h-1zM15,34h1v1h-1zM17,34h1v1h-1zM18,34h1v1h-1zM19,34h1v1h-1zM24,34h1v1h-1zM25,34h1v1h-1zM27,34h1v1h-1zM28,34h1v1h-1zM29,34h1v1h-1zM33,34h1v1h-1z" fill="#111"/></svg><span>Or let them scan this in the hub</span></div>
     <details><summary>Add it to your home screen</summary><ol><li><b>iPhone:</b> open the link in Safari, tap Share, then "Add to Home Screen".</li><li><b>Android:</b> open the link in Chrome, tap ⋮, then "Install app" or "Add to Home screen".</li></ol></details>
     <button class="close" id="share-close" type="button">Close</button>
   </div>
@@ -335,6 +335,10 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 .rl-fail { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: 6rem; }
 .rl-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
 @media (max-width: 640px) { .rl .hide-sm { display: none; } .rl-next .row { grid-template-columns: 1fr auto; } .rl-next .rl-bar { grid-column: 1 / -1; grid-row: 2; } .rl-star { grid-template-columns: 1fr; } }
+.rl-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--cds-gap-md); align-items: center; }
+.rl-head h1, .rl-head p { grid-column: 1; }
+.rl-head .pp-stamp { grid-column: 2; grid-row: 1 / span 2; --pp-w: 156px; --pp-ink: var(--color-fg, #121212); align-self: start; margin-top: 14px; }
+@media (max-width: 520px) { .rl-head .pp-stamp { --pp-w: 122px; margin-right: -4px; } }
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -353,11 +357,12 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 
 <div class="rl">
   <header class="rl-head" id="top">
-    <h1>PORT Rider League</h1>
+    <h1>PORT Rider LeagueBoard</h1>
+    <a class="pp-stamp" id="pp-link" href="newsletter/" aria-label="The PORT Post, the weekly rider newsletter"></a>
     <p id="takeaway" data-source="league_summary" class="dash-skeleton">—</p>
   </header>
 
-  <nav class="rl-nav" role="tablist" aria-label="Rider League sections">
+  <nav class="rl-nav" role="tablist" aria-label="LeagueBoard sections">
     <button role="tab" id="tab-home" data-tab="home" aria-controls="panel-home" aria-selected="true">Home</button>
     <button role="tab" id="tab-boards" data-tab="boards" aria-controls="panel-boards" aria-selected="false"><span class="lg">LeagueBoard</span><span class="sm">LeagueBoard</span></button>
     <button role="tab" id="tab-dungeons" data-tab="dungeons" aria-controls="panel-dungeons" aria-selected="false">Dungeons</button>
@@ -568,7 +573,7 @@ const NULLABLE = ['d_edw_28d', 'd_success_28d', 'd_image_28d', 'd_collected_28d'
 const rows = () => {
   const d = dash.data('league');
   if (d.status !== 'ok') return [];
-  return d.data.filter((r) => r.kind !== 'tour').map((r) => {
+  return d.data.filter((r) => !r.kind).map((r) => {
     const o = { ...r, primary: truthy(r.primary), diamond: truthy(r.diamond) };
     NUMS.forEach((k) => { o[k] = +r[k] || 0; }); NUMS_EXTRA.forEach((k) => { o[k] = r[k] == null ? (+r.leads_all || 0) : +r[k] || 0; });
     NULLABLE.forEach((k) => { o[k] = r[k] == null || r[k] === '' ? null : +r[k]; });
@@ -971,6 +976,100 @@ drawTabs();
 drawBadgeLegend();
 dash.onData(() => { drawTakeaway(); drawDiamond(); drawPodium(); drawBoard(); drawLadder(); drawMilestones('days'); drawMilestones('parcels'); drawHomeBoard(); if (tab === 'boards') drawArrival(); drawDungeons(); drawAll(); });
 showTab(tab, false);
+</script>
+<script>
+/* The PORT Post countdown stamp. Put <a class="pp-stamp" href="..."></a> anywhere; this fills it with a rubber-stamp SVG
+   (tilted, double rounded border, worn grainy ink) counting down to the next issue: Friday 18:00 London time.
+   First issue Fri 23 Oct 2026. From Fri 18:00 to the end of Saturday the stamp reads OUT NOW. */
+(function () {
+  const FIRST = { y: 2026, m: 10, d: 23 };   // first issue (month 1-12)
+  const TZ = 'Europe/London';
+  const NS = 'http://www.w3.org/2000/svg';
+  let uid = 0;
+  function londonParts(t) {
+    const f = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+    const p = {}; f.formatToParts(new Date(t)).forEach((x) => { if (x.type !== 'literal') p[x.type] = +x.value; });
+    return p;
+  }
+  function londonInstant(y, m, d, hh, mm) {        // real time of a London wall-clock moment (handles BST/GMT)
+    let guess = Date.UTC(y, m - 1, d, hh, mm);
+    for (let i = 0; i < 2; i++) { const p = londonParts(guess); const off = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute) - guess; guess = Date.UTC(y, m - 1, d, hh, mm) - off; }
+    return guess;
+  }
+  function issueTimes(now) {
+    // The most recent Friday-18:00 issue time at or before now (or null before issue 1), and the next one after now.
+    const first = londonInstant(FIRST.y, FIRST.m, FIRST.d, 18, 0);
+    if (now < first) return { last: null, next: first, nextNo: 1 };
+    const p = londonParts(now);
+    const back = (new Date(Date.UTC(p.year, p.month - 1, p.day)).getUTCDay() - 5 + 7) % 7;  // days since Friday
+    const fri = new Date(Date.UTC(p.year, p.month - 1, p.day - back));
+    let last = londonInstant(fri.getUTCFullYear(), fri.getUTCMonth() + 1, fri.getUTCDate(), 18, 0);
+    if (last > now) { const f2 = new Date(fri.getTime() - 7 * 864e5); last = londonInstant(f2.getUTCFullYear(), f2.getUTCMonth() + 1, f2.getUTCDate(), 18, 0); }
+    const lp = londonParts(last); const nf = new Date(Date.UTC(lp.year, lp.month - 1, lp.day + 7));
+    const next = londonInstant(nf.getUTCFullYear(), nf.getUTCMonth() + 1, nf.getUTCDate(), 18, 0);
+    const lastNo = Math.round((last - first) / (7 * 864e5)) + 1;
+    return { last, lastNo, next, nextNo: lastNo + 1 };
+  }
+  function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function build(a) {
+    const id = 'ppg' + (++uid);
+    const svg = el('svg', { viewBox: '0 0 260 104', 'aria-hidden': 'true', focusable: 'false' });
+    const defs = el('defs', {}, svg);
+    const f = el('filter', { id, x: '-4%', y: '-6%', width: '108%', height: '112%', 'color-interpolation-filters': 'sRGB' }, defs);
+    // fine grain + larger worn patches, both thresholded into holes in the ink; a little displacement roughens the edges
+    el('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.75 0.4', numOctaves: '2', seed: String(3 + uid), result: 'fine' }, f);
+    el('feColorMatrix', { in: 'fine', type: 'matrix', values: '0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -9 6.4', result: 'fineA' }, f);
+    el('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.055 0.11', numOctaves: '3', seed: String(11 + uid), result: 'patch' }, f);
+    el('feColorMatrix', { in: 'patch', type: 'matrix', values: '0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -11 7.7', result: 'patchA' }, f);
+    el('feComposite', { in: 'fineA', in2: 'patchA', operator: 'in', result: 'holes' }, f);
+    el('feTurbulence', { type: 'turbulence', baseFrequency: '0.6', numOctaves: '1', seed: String(5 + uid), result: 'warp' }, f);
+    el('feDisplacementMap', { in: 'SourceGraphic', in2: 'warp', scale: '1.7', xChannelSelector: 'R', yChannelSelector: 'G', result: 'rough' }, f);
+    el('feComposite', { in: 'rough', in2: 'holes', operator: 'in' }, f);
+    const g = el('g', { filter: `url(#${id})`, fill: 'none', stroke: 'currentColor' }, svg);
+    el('rect', { x: 5, y: 5, width: 250, height: 94, rx: 13, 'stroke-width': 8 }, g);
+    el('rect', { x: 17, y: 17, width: 226, height: 70, rx: 5, 'stroke-width': 3.6 }, g);
+    const t = el('g', { fill: 'currentColor', stroke: 'none', 'font-family': "'Arial Narrow','Roboto Condensed','Helvetica Neue',Arial,sans-serif", 'font-weight': '700', 'text-anchor': 'middle' }, g);
+    const top = el('text', { x: 130, y: 37, 'font-size': 15, textLength: 168, lengthAdjust: 'spacingAndGlyphs' }, t); top.textContent = 'THE PORT POST';
+    const mid = el('text', { x: 130, y: 66, 'font-size': 31, textLength: 196, lengthAdjust: 'spacingAndGlyphs' }, t);
+    const bot = el('text', { x: 130, y: 82, 'font-size': 12.5, textLength: 168, lengthAdjust: 'spacingAndGlyphs' }, t);
+    a.replaceChildren(svg);
+    const label = document.createElement('span'); label.className = 'pp-sr'; a.appendChild(label);
+    return { mid, bot, label };
+  }
+  const pad = (n) => String(n).padStart(2, '0');
+  const parts = []; let timer = null;
+  function tick() {
+    const now = Date.now(); const s = issueTimes(now);
+    let mid, bot, say;
+    if (s.last && now - s.last < 30 * 3600e3) {          // Fri 18:00 until Sat 23:59
+      mid = 'OUT NOW'; bot = `ISSUE ${s.lastNo} · TAP TO READ`; say = `The PORT Post issue ${s.lastNo} is out now. Tap to read.`;
+    } else {
+      const ms = s.next - now, d = Math.floor(ms / 864e5), h = Math.floor(ms / 3600e3) % 24, m = Math.floor(ms / 60e3) % 60, sec = Math.floor(ms / 1e3) % 60;
+      mid = d > 0 ? `${d}D ${pad(h)}H ${pad(m)}M` : h > 0 ? `${h}H ${pad(m)}M ${pad(sec)}S` : `${pad(m)}M ${pad(sec)}S`;
+      bot = s.nextNo === 1 ? 'ISSUE 1 · FRI 23 OCT · 18:00' : `ISSUE ${s.nextNo} · FRIDAY 18:00`;
+      say = `The PORT Post, issue ${s.nextNo}, comes out in ${d ? d + ' days ' : ''}${h} hours ${m} minutes.`;
+    }
+    parts.forEach((p) => { if (p.mid.textContent !== mid) p.mid.textContent = mid; p.bot.textContent = bot; p.label.textContent = say; });
+    const ms = s.next - now;
+    clearTimeout(timer); timer = setTimeout(tick, ms < 864e5 ? 1000 : 30000);
+  }
+  function init() {
+    if (!document.getElementById('pp-stamp-css')) {
+      const st = document.createElement('style'); st.id = 'pp-stamp-css';
+      st.textContent = `.pp-stamp{--pp-ink:#121212;display:inline-block;width:var(--pp-w,170px);color:var(--pp-ink);text-decoration:none;transform:rotate(-27deg);transform-origin:50% 50%;margin:calc(var(--pp-w,170px)*.2) calc(var(--pp-w,170px)*.03);opacity:.93;transition:transform .15s ease;-webkit-tap-highlight-color:transparent;line-height:0}
+.pp-stamp svg{display:block;width:100%;height:auto;overflow:visible}
+.pp-stamp:hover{transform:rotate(-27deg) scale(1.04)}
+.pp-stamp:focus-visible{outline:3px solid var(--pp-ink);outline-offset:6px;border-radius:12px}
+.pp-stamp .pp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.pp-stamp{transition:none}}`;
+      document.head.appendChild(st);
+    }
+    document.querySelectorAll('a.pp-stamp:not([data-pp])').forEach((a) => { a.setAttribute('data-pp', '1'); parts.push(build(a)); });
+    if (parts.length) tick();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  window.PPStamp = { issueTimes, londonInstant }; window.PPStampInit = init;
+})();
 </script>
 
 </div>
