@@ -22,6 +22,13 @@ body{padding:max(12px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inse
 .app-bar .stale{color:var(--color-bad)}
 .app-bar .btns{display:flex;gap:8px}
 .share-dlg{border:0;border-radius:16px;padding:0;width:min(420px,calc(100vw - 32px));background:var(--color-panel);color:var(--color-fg);box-shadow:0 20px 60px rgba(0,0,0,.35);font:15px/1.4 var(--font-anthropic-sans)}
+.install-bar{max-width:1180px;margin:0 auto 12px;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#161b2d;color:#fff;font:14px/1.3 var(--font-anthropic-sans)}
+.install-bar[hidden]{display:none}
+.install-bar img{width:32px;height:32px;border-radius:8px;flex:none}
+.install-bar span{flex:1;min-width:0}
+.install-bar button{font:inherit;border:0;border-radius:999px;padding:8px 14px;cursor:pointer}
+.install-bar .go{background:#fff;color:#161b2d;font-weight:600}
+.install-bar .x{background:transparent;color:#fff;padding:8px 6px;font-size:18px;line-height:1}
 .share-dlg::backdrop{background:rgba(10,12,20,.55)}
 .share-dlg .in{padding:20px;display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
 .share-dlg h2{margin:0;font:400 22px/1.2 var(--font-anthropic-serif)}
@@ -66,7 +73,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     el.classList.toggle('stale', hrs > 36);
   }
   /* App updates: if a newer version of this page is online, reload into it (no reinstall needed). */
-  window.APP_VERSION = '2026-10-18e';
+  window.APP_VERSION = '2026-10-18f';
   let checking = false;
   async function checkUpdate() {
     if (checking) return; checking = true;
@@ -98,6 +105,25 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     document.getElementById('share-close').addEventListener('click', () => dlg.close ? dlg.close() : dlg.removeAttribute('open'));
     dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
   }
+  /* Android / Chrome: one-tap install (iPhone has no install prompt, so the bar never shows there) */
+  let installEvt = null;
+  const standalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault(); installEvt = e;
+    let dismissed = 0; try { dismissed = +localStorage.getItem('install-dismissed') || 0; } catch (x) {}
+    const bar = document.getElementById('install-bar');
+    if (bar && !standalone() && Date.now() - dismissed > 7 * 864e5) bar.hidden = false;
+  });
+  window.addEventListener('appinstalled', () => { installEvt = null; const bar = document.getElementById('install-bar'); if (bar) bar.hidden = true; });
+  function initInstall() {
+    const bar = document.getElementById('install-bar'); if (!bar) return;
+    document.getElementById('install-go').addEventListener('click', async () => {
+      if (!installEvt) { bar.hidden = true; return; }
+      installEvt.prompt(); try { await installEvt.userChoice; } catch (x) {}
+      installEvt = null; bar.hidden = true;
+    });
+    document.getElementById('install-x').addEventListener('click', () => { bar.hidden = true; try { localStorage.setItem('install-dismissed', String(Date.now())); } catch (x) {} });
+  }
   function apply(j, fromCache) {
     DATA = Array.isArray(j) ? j : (j.rows || []);
     show(Array.isArray(j) ? null : j.updated, fromCache);
@@ -117,7 +143,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
   }
   window.addEventListener('load', () => {
     load();
-    checkUpdate(); initShare();
+    checkUpdate(); initShare(); initInstall();
     const b = document.getElementById('app-refresh'); if (b) b.addEventListener('click', () => { load(); checkUpdate(); });
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { load(); checkUpdate(); } });
   });
@@ -127,6 +153,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 </head>
 <body>
 <div class="app-bar"><span id="app-updated">Loading…</span><span class="btns"><button id="app-share" type="button" aria-haspopup="dialog">Share</button><button id="app-refresh" type="button">Refresh</button></span></div>
+<div class="install-bar" id="install-bar" role="region" aria-label="Install the app" hidden><img src="icons/icon-192.png" alt=""><span>Add Rider League to your home screen</span><button class="go" id="install-go" type="button">Install</button><button class="x" id="install-x" type="button" aria-label="Not now">×</button></div>
 <dialog class="share-dlg" id="share-dlg" aria-labelledby="share-h">
   <div class="in">
     <h2 id="share-h">Share the Rider League</h2>
