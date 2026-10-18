@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The PORT Post</title>
+<meta name="description" content="The weekly newsletter for PORT riders: records, shout-outs, top 3s and badges. New issue every Friday at 18:00.">
+<meta name="theme-color" content="#161b2d">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;700&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap">
+<style>
+/* Layout: one narrow bulletin column. Masthead with the stamp, a headline number, then sections separated by heavy rules like a printed hub notice. */
+:root{
+  --paper:#f6f5f2; --sheet:#ffffff; --ink:#15171c; --muted:#5d6270; --rule:#d9d6cf; --navy:#161b2d; --gold:#b8860b; --good:#2f7d4f; --stamp:#121212;
+  --f-display:"Archivo Narrow","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-ui:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#121419;--sheet:#1b1e25;--ink:#ecebe7;--muted:#a3a7b3;--rule:#30343e;--navy:#0c0f19;--gold:#e0b84a;--good:#5cc489;--stamp:#ecebe7;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#121419;--sheet:#1b1e25;--ink:#ecebe7;--muted:#a3a7b3;--rule:#30343e;--navy:#0c0f19;--gold:#e0b84a;--good:#5cc489;--stamp:#ecebe7;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+body{font:17px/1.55 var(--f-body);-webkit-text-size-adjust:100%;padding-top:env(safe-area-inset-top,0px);padding-bottom:max(24px,env(safe-area-inset-bottom,0px))}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:4px 0;font:14px/1.3 var(--f-ui)}
+.bar .pp-stamp{--pp-w:150px;--pp-ink:var(--stamp)}
+.bar a.back{color:var(--ink);text-decoration:none;border:1px solid var(--rule);background:var(--sheet);border-radius:999px;padding:7px 14px}
+.mast select{font:inherit;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);border-radius:999px;padding:7px 10px;max-width:46vw}
+.mast{display:grid;gap:8px;border-bottom:6px solid var(--ink);padding-bottom:10px}
+.mast .row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+.mast h1{font:700 clamp(40px,11vw,76px)/.9 var(--f-display);letter-spacing:-.01em;margin:0;text-transform:uppercase;text-wrap:balance}
+.mast .meta{font:600 13px/1.3 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lead{padding-block:22px 6px;display:grid;gap:6px}
+.kicker{font:700 13px/1 var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.big{font:700 clamp(64px,20vw,128px)/.85 var(--f-display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.big small{display:block;font:600 15px/1.3 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+.lead p{margin:6px 0 0;font-size:19px;max-width:60ch}
+section{border-top:3px solid var(--ink);margin-top:26px;padding-top:12px}
+h2{font:700 24px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.02em;margin:0 0 12px}
+h2 .n{color:var(--muted);font-weight:500}
+.recs{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.rec{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:12px 14px;display:grid;gap:4px;min-width:0}
+.rec .v{font:700 34px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.rec .l{font:600 14px/1.3 var(--f-ui)}
+.rec .w{font:13px/1.35 var(--f-ui);color:var(--muted)}
+.rec .x{font:600 12px/1 var(--f-ui);color:var(--good);letter-spacing:.04em;text-transform:uppercase}
+blockquote{margin:0 0 14px;padding:2px 0 2px 16px;border-left:4px solid var(--ink);font-size:20px;line-height:1.45}
+blockquote cite{display:block;font:600 13px/1.4 var(--f-ui);font-style:normal;color:var(--muted);margin-top:4px;letter-spacing:.04em;text-transform:uppercase}
+.tops{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.top h3{font:700 15px/1.2 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px;color:var(--muted)}
+.top ol{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.top li{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:10px;background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:8px 12px;font:15px/1.3 var(--f-ui)}
+.top li b{font:700 22px/1 var(--f-display);text-align:center}
+.top li:nth-child(1) b{color:var(--gold)}
+.top li .p{font-variant-numeric:tabular-nums;font-weight:600}
+.top li .s{display:block;color:var(--muted);font-size:12.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.chips li{font:14px/1.3 var(--f-ui);background:var(--sheet);border:1px solid var(--rule);border-radius:999px;padding:6px 12px}
+.chips li b{font-weight:650}
+.dg{background:var(--navy);color:#fff;border-radius:8px;padding:16px 18px;display:grid;gap:6px}
+.dg .t{font:700 44px/1 var(--f-display)}
+.dg .lv{font:600 13px/1.2 var(--f-ui);letter-spacing:.1em;text-transform:uppercase;color:#e9c46a}
+.dg p{margin:0;font-size:17px}
+.tip{background:var(--sheet);border:2px dashed var(--ink);border-radius:8px;padding:14px 16px}
+.tip h3{font:700 20px/1.2 var(--f-display);text-transform:uppercase;margin:0 0 4px}
+.tip p{margin:0}
+.book{display:grid;border-top:1px solid var(--rule)}
+.bk{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:14px;row-gap:2px;padding:9px 2px;border-bottom:1px solid var(--rule);font:15px/1.35 var(--f-ui)}
+.bk .v{font:700 22px/1.05 var(--f-display);font-variant-numeric:tabular-nums;text-align:right;grid-row:span 2;align-self:center}
+.bk .w{color:var(--muted);font-size:13px}
+.note{font:14px/1.5 var(--f-ui);color:var(--muted)}
+.empty{padding-block:40px;text-align:center;display:grid;justify-items:center;gap:14px}
+.empty .pp-stamp{--pp-w:min(300px,80vw);--pp-ink:var(--stamp)}
+.empty p{max-width:44ch;margin:0}
+footer{margin-top:34px;border-top:6px solid var(--ink);padding-top:10px;font:13px/1.5 var(--f-ui);color:var(--muted)}
+footer a{color:var(--ink)}
+a:focus-visible,select:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@media (max-width:480px){.bar .pp-stamp{--pp-w:124px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar"><a class="back" href="../">← LeagueBoard</a><a class="pp-stamp" href="#top" aria-label="Countdown to the next issue"></a></div>
+  <header class="mast">
+    <h1>The PORT Post</h1>
+    <div class="row"><span class="meta" id="meta">Weekly · Fridays at 18:00</span><select id="pick" aria-label="Choose an issue" hidden></select></div>
+  </header>
+  <main id="top"></main>
+  <footer>The PORT Post is put together every Friday from the LeagueBoard and the hub team's shout-outs. Riders appear by first name and initial. Points, levels and badges: <a href="../">PORT Rider LeagueBoard</a>.</footer>
+</div>
+<script>
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const E = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const pct = (v) => v == null ? '–' : (v * 100).toFixed(1) + '%';
+  const longDate = (s) => new Date(s + 'T12:00:00Z').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/London' });
+  const sec = (title, n) => { const s = E('section'); const h = E('h2', null, title); if (n) { h.append(' '); h.append(E('span', 'n', n)); } s.append(h); return s; };
+  function render(issue, all) {
+    const m = $('#top'); m.replaceChildren();
+    $('#meta').textContent = `Issue ${issue.no} · ${longDate(issue.date)}`;
+    document.title = `The PORT Post · Issue ${issue.no}`;
+    const h = issue.headline || {};
+    const lead = E('div', 'lead'); lead.append(E('div', 'kicker', h.kicker || ''));
+    const big = E('div', 'big', h.big || ''); big.append(E('small', null, h.unit || '')); lead.append(big, E('p', null, h.text || '')); m.append(lead);
+    if (issue.broken && issue.broken.length) {
+      const s = sec(issue.no === 1 ? 'Records broken so far' : 'Records broken this week', String(issue.broken.length)); const g = E('div', 'recs');
+      issue.broken.forEach((b) => { const c = E('div', 'rec'); c.append(E('div', 'v', b.value), E('div', 'l', b.label), E('div', 'w', [b.holder, b.when].filter(Boolean).join(' · ')));
+        c.append(E('div', 'x', issue.no === 1 ? `up from ${b.start}${b.times > 1 ? ` · broken ${b.times} times` : ''}` : `was ${b.was}`)); g.append(c); });
+      s.append(g); m.append(s);
+    }
+    if (issue.firsts && issue.firsts.length) {
+      const s = sec('First to Master a tour'); const ul = E('ul', 'chips');
+      issue.firsts.forEach((f) => { const li = E('li'); li.append(E('b', null, f.name), ` · ${f.tour} · ${f.when}`); ul.append(li); }); s.append(ul);
+      s.append(E('p', 'note', 'A Master has done 25 shifts on the same tour (shadow shifts count as half).')); m.append(s);
+    }
+    if (issue.shoutouts && issue.shoutouts.length) {
+      const s = sec('Shout-outs');
+      issue.shoutouts.forEach((q) => { const b = E('blockquote', null, `“${q.quote}”`); b.append(E('cite', null, `${q.who} · ${new Date(q.date + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`)); s.append(b); });
+      m.append(s);
+    }
+    const tp = issue.top || {};
+    if ((tp.D2D && tp.D2D.length) || (tp.OOH && tp.OOH.length)) {
+      const s = sec('Top 3 this week'); const g = E('div', 'tops');
+      [['D2D', 'Doorstep'], ['OOH', 'Lockers']].forEach(([k, nm]) => { if (!tp[k] || !tp[k].length) return; const box = E('div', 'top'); box.append(E('h3', null, nm)); const ol = E('ol');
+        tp[k].forEach((t, i) => { const li = E('li'); const who = E('span', null, t.name); who.append(E('span', 's', `${t.shifts} shifts · ${t.parcels.toLocaleString('en-GB')} parcels${t.perfect ? ` · ${t.perfect} perfect` : ''}`));
+          li.append(E('b', null, String(i + 1)), who, E('span', 'p', `${t.points.toLocaleString('en-GB')} pts`)); ol.append(li); });
+        box.append(ol); g.append(box); });
+      s.append(g); s.append(E('p', 'note', `Points from ${new Date(issue.week.start + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} to ${new Date(issue.week.end + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}, riders with 2+ shifts.`)); m.append(s);
+    }
+    const bl = [...(issue.badges || []).map((b) => [b.name, b.badge]), ...(issue.masters || []).map((x) => [x.name, `Master of ${x.tour}`])];
+    if (bl.length) { const s = sec(issue.no === 1 ? 'Badge honours' : 'New badges'); const ul = E('ul', 'chips'); bl.forEach(([n, b]) => { const li = E('li'); li.append(E('b', null, n), ` · ${b}`); ul.append(li); }); s.append(ul); m.append(s); }
+    if (issue.dungeon) {
+      const d = issue.dungeon; const s = sec('Dungeon of the week'); const c = E('div', 'dg');
+      c.append(E('div', 'lv', `Level ${d.level} · ${d.level_name}`), E('div', 't', d.tour));
+      if (d.area) c.append(E('p', null, d.area)); if (d.why) c.append(E('p', null, d.why));
+      c.append(E('p', null, d.masters && d.masters.length ? `Masters: ${d.masters.join(', ')}` : 'No Master yet. Could it be you?'));
+      s.append(c); m.append(s);
+    }
+    if (issue.welcome && issue.welcome.length) { const s = sec('Welcome to the road'); s.append(E('p', null, `First solo shifts this week: ${issue.welcome.join(', ')}. Great start!`)); m.append(s); }
+    if (issue.tip) { const s = sec('Tip of the week'); const t = E('div', 'tip'); t.append(E('h3', null, issue.tip.title), E('p', null, issue.tip.text)); s.append(t); m.append(s); }
+    if (issue.book && issue.book.length) {
+      const s = sec('The record book'); const w = E('div', 'book');
+      issue.book.forEach((b) => { const r = E('div', 'bk'); r.append(E('div', 'l', b.label), E('div', 'v', b.value), E('div', 'w', [b.holder, b.when, b.detail].filter(Boolean).join(' · '))); w.append(r); });
+      s.append(w); s.append(E('p', 'note', 'Records count from July 2026, when every shift started going into the Shift Log.')); m.append(s);
+    }
+    const hb = issue.hub || {};
+    if (hb.d2d) { const s = sec('The week in numbers'); s.append(E('p', null, `${hb.riders} riders · ${hb.tours} tours · ${hb.d2d.toLocaleString('en-GB')} doorstep parcels at ${pct(hb.success)} delivered · ${(hb.ooh || 0).toLocaleString('en-GB')} locker parcels · EDW ${pct(hb.edw)}`)); m.append(s); }
+  }
+  function empty() {
+    const bs = document.querySelector('.bar .pp-stamp'); if (bs) bs.hidden = true;
+    const m = $('#top'); m.replaceChildren(); const box = E('div', 'empty'); const st = document.createElement('a'); st.className = 'pp-stamp'; st.href = '../';
+    box.append(st, E('p', null, 'The first issue of The PORT Post lands on Friday 23 October at 18:00: every record PORT has broken so far, shout-outs from the hub, and this week\'s top 3.'));
+    m.append(box); if (window.PPStampInit) window.PPStampInit();
+  }
+  function show(data) {
+    const all = (data && data.issues) || []; if (!all.length) return empty();
+    const pick = $('#pick'); pick.replaceChildren(...all.map((i) => { const o = E('option', null, `Issue ${i.no} · ${new Date(i.date + 'T12:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`); o.value = i.no; return o; }));
+    pick.hidden = all.length < 2;
+    const want = +(location.hash.match(/^#issue-(\d+)$/) || [])[1];
+    const cur = all.find((i) => i.no === want) || all[0]; pick.value = cur.no; render(cur, all);
+    pick.onchange = () => { const i = all.find((x) => x.no === +pick.value); if (i) { history.replaceState(null, '', '#issue-' + i.no); render(i, all); window.scrollTo(0, 0); } };
+  }
+  if (window.PP_ISSUES) show(window.PP_ISSUES);
+  else fetch('issues.json', { cache: 'no-cache' }).then((r) => r.ok ? r.json() : null).then(show).catch(() => show(null));
+})();
+</script>
+<script>
+/* The PORT Post countdown stamp. Put <a class="pp-stamp" href="..."></a> anywhere; this fills it with a rubber-stamp SVG
+   (tilted, double rounded border, worn grainy ink) counting down to the next issue: Friday 18:00 London time.
+   First issue Fri 23 Oct 2026. From Fri 18:00 to the end of Saturday the stamp reads OUT NOW. */
+(function () {
+  const FIRST = { y: 2026, m: 10, d: 23 };   // first issue (month 1-12)
+  const TZ = 'Europe/London';
+  const NS = 'http://www.w3.org/2000/svg';
+  let uid = 0;
+  function londonParts(t) {
+    const f = new Intl.DateTimeFormat('en-GB', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' });
+    const p = {}; f.formatToParts(new Date(t)).forEach((x) => { if (x.type !== 'literal') p[x.type] = +x.value; });
+    return p;
+  }
+  function londonInstant(y, m, d, hh, mm) {        // real time of a London wall-clock moment (handles BST/GMT)
+    let guess = Date.UTC(y, m - 1, d, hh, mm);
+    for (let i = 0; i < 2; i++) { const p = londonParts(guess); const off = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute) - guess; guess = Date.UTC(y, m - 1, d, hh, mm) - off; }
+    return guess;
+  }
+  function issueTimes(now) {
+    // The most recent Friday-18:00 issue time at or before now (or null before issue 1), and the next one after now.
+    const first = londonInstant(FIRST.y, FIRST.m, FIRST.d, 18, 0);
+    if (now < first) return { last: null, next: first, nextNo: 1 };
+    const p = londonParts(now);
+    const back = (new Date(Date.UTC(p.year, p.month - 1, p.day)).getUTCDay() - 5 + 7) % 7;  // days since Friday
+    const fri = new Date(Date.UTC(p.year, p.month - 1, p.day - back));
+    let last = londonInstant(fri.getUTCFullYear(), fri.getUTCMonth() + 1, fri.getUTCDate(), 18, 0);
+    if (last > now) { const f2 = new Date(fri.getTime() - 7 * 864e5); last = londonInstant(f2.getUTCFullYear(), f2.getUTCMonth() + 1, f2.getUTCDate(), 18, 0); }
+    const lp = londonParts(last); const nf = new Date(Date.UTC(lp.year, lp.month - 1, lp.day + 7));
+    const next = londonInstant(nf.getUTCFullYear(), nf.getUTCMonth() + 1, nf.getUTCDate(), 18, 0);
+    const lastNo = Math.round((last - first) / (7 * 864e5)) + 1;
+    return { last, lastNo, next, nextNo: lastNo + 1 };
+  }
+  function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function build(a) {
+    const id = 'ppg' + (++uid);
+    const svg = el('svg', { viewBox: '0 0 260 104', 'aria-hidden': 'true', focusable: 'false' });
+    const defs = el('defs', {}, svg);
+    const f = el('filter', { id, x: '-4%', y: '-6%', width: '108%', height: '112%', 'color-interpolation-filters': 'sRGB' }, defs);
+    // fine grain + larger worn patches, both thresholded into holes in the ink; a little displacement roughens the edges
+    el('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.75 0.4', numOctaves: '2', seed: String(3 + uid), result: 'fine' }, f);
+    el('feColorMatrix', { in: 'fine', type: 'matrix', values: '0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -9 6.4', result: 'fineA' }, f);
+    el('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.055 0.11', numOctaves: '3', seed: String(11 + uid), result: 'patch' }, f);
+    el('feColorMatrix', { in: 'patch', type: 'matrix', values: '0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -11 7.7', result: 'patchA' }, f);
+    el('feComposite', { in: 'fineA', in2: 'patchA', operator: 'in', result: 'holes' }, f);
+    el('feTurbulence', { type: 'turbulence', baseFrequency: '0.6', numOctaves: '1', seed: String(5 + uid), result: 'warp' }, f);
+    el('feDisplacementMap', { in: 'SourceGraphic', in2: 'warp', scale: '1.7', xChannelSelector: 'R', yChannelSelector: 'G', result: 'rough' }, f);
+    el('feComposite', { in: 'rough', in2: 'holes', operator: 'in' }, f);
+    const g = el('g', { filter: `url(#${id})`, fill: 'none', stroke: 'currentColor' }, svg);
+    el('rect', { x: 5, y: 5, width: 250, height: 94, rx: 13, 'stroke-width': 8 }, g);
+    el('rect', { x: 17, y: 17, width: 226, height: 70, rx: 5, 'stroke-width': 3.6 }, g);
+    const t = el('g', { fill: 'currentColor', stroke: 'none', 'font-family': "'Arial Narrow','Roboto Condensed','Helvetica Neue',Arial,sans-serif", 'font-weight': '700', 'text-anchor': 'middle' }, g);
+    const top = el('text', { x: 130, y: 37, 'font-size': 15, textLength: 168, lengthAdjust: 'spacingAndGlyphs' }, t); top.textContent = 'THE PORT POST';
+    const mid = el('text', { x: 130, y: 66, 'font-size': 31, textLength: 196, lengthAdjust: 'spacingAndGlyphs' }, t);
+    const bot = el('text', { x: 130, y: 82, 'font-size': 12.5, textLength: 168, lengthAdjust: 'spacingAndGlyphs' }, t);
+    a.replaceChildren(svg);
+    const label = document.createElement('span'); label.className = 'pp-sr'; a.appendChild(label);
+    return { mid, bot, label };
+  }
+  const pad = (n) => String(n).padStart(2, '0');
+  const parts = []; let timer = null;
+  function tick() {
+    const now = Date.now(); const s = issueTimes(now);
+    let mid, bot, say;
+    if (s.last && now - s.last < 30 * 3600e3) {          // Fri 18:00 until Sat 23:59
+      mid = 'OUT NOW'; bot = `ISSUE ${s.lastNo} · TAP TO READ`; say = `The PORT Post issue ${s.lastNo} is out now. Tap to read.`;
+    } else {
+      const ms = s.next - now, d = Math.floor(ms / 864e5), h = Math.floor(ms / 3600e3) % 24, m = Math.floor(ms / 60e3) % 60, sec = Math.floor(ms / 1e3) % 60;
+      mid = d > 0 ? `${d}D ${pad(h)}H ${pad(m)}M` : h > 0 ? `${h}H ${pad(m)}M ${pad(sec)}S` : `${pad(m)}M ${pad(sec)}S`;
+      bot = s.nextNo === 1 ? 'ISSUE 1 · FRI 23 OCT · 18:00' : `ISSUE ${s.nextNo} · FRIDAY 18:00`;
+      say = `The PORT Post, issue ${s.nextNo}, comes out in ${d ? d + ' days ' : ''}${h} hours ${m} minutes.`;
+    }
+    parts.forEach((p) => { if (p.mid.textContent !== mid) p.mid.textContent = mid; p.bot.textContent = bot; p.label.textContent = say; });
+    const ms = s.next - now;
+    clearTimeout(timer); timer = setTimeout(tick, ms < 864e5 ? 1000 : 30000);
+  }
+  function init() {
+    if (!document.getElementById('pp-stamp-css')) {
+      const st = document.createElement('style'); st.id = 'pp-stamp-css';
+      st.textContent = `.pp-stamp{--pp-ink:#121212;display:inline-block;width:var(--pp-w,170px);color:var(--pp-ink);text-decoration:none;transform:rotate(-27deg);transform-origin:50% 50%;margin:calc(var(--pp-w,170px)*.2) calc(var(--pp-w,170px)*.03);opacity:.93;transition:transform .15s ease;-webkit-tap-highlight-color:transparent;line-height:0}
+.pp-stamp svg{display:block;width:100%;height:auto;overflow:visible}
+.pp-stamp:hover{transform:rotate(-27deg) scale(1.04)}
+.pp-stamp:focus-visible{outline:3px solid var(--pp-ink);outline-offset:6px;border-radius:12px}
+.pp-stamp .pp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.pp-stamp{transition:none}}`;
+      document.head.appendChild(st);
+    }
+    document.querySelectorAll('a.pp-stamp:not([data-pp])').forEach((a) => { a.setAttribute('data-pp', '1'); parts.push(build(a)); });
+    if (parts.length) tick();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+  window.PPStamp = { issueTimes, londonInstant }; window.PPStampInit = init;
+})();
+
+</script>
+</body>
+</html>
