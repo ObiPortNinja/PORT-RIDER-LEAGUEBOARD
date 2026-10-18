@@ -48,6 +48,20 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     el.textContent = (fromCache ? 'Offline: last updated ' : 'Updated ') + t;
     el.classList.toggle('stale', hrs > 36);
   }
+  /* App updates: if a newer version of this page is online, reload into it (no reinstall needed). */
+  window.APP_VERSION = '2026-10-18d';
+  let checking = false;
+  async function checkUpdate() {
+    if (checking) return; checking = true;
+    try {
+      const t = await fetch('index.html?v=' + Date.now(), { cache: 'no-store' }).then((r) => r.ok ? r.text() : '');
+      const m = t.match(/APP_VERSION = '([^']+)'/);
+      if (m && m[1] !== window.APP_VERSION) {
+        try { const reg = await navigator.serviceWorker?.getRegistration(); if (reg) await reg.update(); } catch (e) {}
+        location.reload(); return;
+      }
+    } catch (e) {} finally { checking = false; }
+  }
   function apply(j, fromCache) {
     DATA = Array.isArray(j) ? j : (j.rows || []);
     show(Array.isArray(j) ? null : j.updated, fromCache);
@@ -67,8 +81,9 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
   }
   window.addEventListener('load', () => {
     load();
-    const b = document.getElementById('app-refresh'); if (b) b.addEventListener('click', load);
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') load(); });
+    checkUpdate();
+    const b = document.getElementById('app-refresh'); if (b) b.addEventListener('click', () => { load(); checkUpdate(); });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { load(); checkUpdate(); } });
   });
   if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 })();
