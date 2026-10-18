@@ -366,7 +366,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     <button role="tab" id="tab-home" data-tab="home" aria-controls="panel-home" aria-selected="true">Home</button>
     <button role="tab" id="tab-boards" data-tab="boards" aria-controls="panel-boards" aria-selected="false"><span class="lg">Every rider</span><span class="sm">Riders</span></button>
     <button role="tab" id="tab-dungeons" data-tab="dungeons" aria-controls="panel-dungeons" aria-selected="false">Dungeons</button>
-    <button role="tab" id="tab-levels" data-tab="levels" aria-controls="panel-levels" aria-selected="false"><span class="lg">Levels &amp; badges</span><span class="sm">Levels</span></button>
+    <button role="tab" id="tab-levels" data-tab="levels" aria-controls="panel-levels" aria-selected="false"><span class="lg">How to climb &amp; badges</span><span class="sm">Badges</span></button>
   </nav>
 
   <div class="rl-panel" id="panel-home" role="tabpanel" aria-labelledby="tab-home">
@@ -388,6 +388,12 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
   <section class="rl-sec" id="home-board-sec">
     <h2 id="home-board-h">Rest of the top 10</h2>
     <div class="rl-card rl-home-list" id="home-board" data-source="league"></div>
+  </section>
+
+  <section class="rl-sec" id="levels">
+    <h2>Levels</h2>
+    <p class="rl-note">Your level comes from all the tours you've done for PORT and your rating since July, and it's the same in both divisions. Doorstep rating = 40% on-time window (EDW) + 40% delivery success + 20% photo compliance; lockers rating = delivery success.</p>
+    <div class="rl-ladder" id="ladder" data-source="league_levels"></div>
   </section>
 
   <section class="rl-sec" id="boards">
@@ -424,30 +430,12 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     </div>
   </section>
 
-  <section class="rl-sec rl-grid2" id="arrival-sec">
+  <section class="rl-sec" id="arrival-sec">
     <div class="rl-card">
       <h2>Arrival time vs rating</h2>
       <p class="rl-note">Each dot is a rider in a division: average hub check-in over the last 28 days (left = earlier) against their rating in that division. 2+ recorded check-ins.</p>
       <div class="rl-legend"><span><i id="lg0"></i>Doorstep (D2D)</span><span><i id="lg1"></i>Lockers (OOH)</span></div>
       <div class="rl-chart" id="arrival" data-source="league"></div>
-    </div>
-    <div class="rl-card">
-      <h2>How to climb</h2>
-      <div class="rl-rules">
-        <table class="rl-pts-table"><tbody>
-          <tr><td>Each parcel delivered</td><td class="n">+1</td></tr>
-          <tr><td>Perfect shift</td><td class="n">+30</td></tr>
-          <tr><td>Leave the hub before 11:30</td><td class="n">+20</td></tr>
-          <tr><td>Lead a training shift (a new rider shadows you)</td><td class="n">+15</td></tr>
-          <tr><td>Check in at the hub by 09:30</td><td class="n">+10</td></tr>
-          <tr><td>Check in at the hub by 10:30</td><td class="n">+5</td></tr>
-        </tbody></table>
-        <ul>
-          <li><b>Perfect shift:</b> a solo shift with 50+ parcels taken out, or a lead (training) shift with 40+, and 98%+ delivered. On doorstep shifts you also need 95%+ inside InPost's delivery window (EDW). Shifts still waiting for their scores don't count yet, and don't break a streak.</li>
-          <li><b>Tour Dungeons:</b> harder tours (Level 2 to Boss Tour) will earn bonus points for beating the tour's average, starting with a 2-week preview. See the Dungeons tab.</li>
-          <li><b>Diamond Deliverer:</b> #1 in your division 3 weeks in a row (Monday to Sunday points, at least 2 shifts that week), or 10 perfect shifts in a row.</li>
-        </ul>
-      </div>
     </div>
   </section>
   </div>
@@ -479,11 +467,28 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
   </div>
 
   <div class="rl-panel" id="panel-levels" role="tabpanel" aria-labelledby="tab-levels" hidden>
-  <section class="rl-sec" id="levels">
-    <h2>Levels</h2>
-    <p class="rl-note">Your level comes from all the tours you've done for PORT and your rating since July, and it's the same in both divisions. Doorstep rating = 40% on-time window (EDW) + 40% delivery success + 20% photo compliance; lockers rating = delivery success.</p>
-    <div class="rl-ladder" id="ladder" data-source="league_levels"></div>
+  <section class="rl-sec" id="climb-sec">
+    <div class="rl-card">
+      <h2>How to climb</h2>
+      <div class="rl-rules">
+        <table class="rl-pts-table"><tbody>
+          <tr><td>Each parcel delivered</td><td class="n">+1</td></tr>
+          <tr><td>Perfect shift</td><td class="n">+30</td></tr>
+          <tr><td>Leave the hub before 11:30</td><td class="n">+20</td></tr>
+          <tr><td>Lead a training shift (a new rider shadows you)</td><td class="n">+15</td></tr>
+          <tr><td>Check in at the hub by 09:30</td><td class="n">+10</td></tr>
+          <tr><td>Check in at the hub by 10:30</td><td class="n">+5</td></tr>
+        </tbody></table>
+        <ul>
+          <li><b>Perfect shift:</b> a solo shift with 50+ parcels taken out, or a lead (training) shift with 40+, and 98%+ delivered. On doorstep shifts you also need 95%+ inside InPost's delivery window (EDW). Shifts still waiting for their scores don't count yet, and don't break a streak.</li>
+          <li><b>Tour Dungeons:</b> harder tours (Level 2 to Boss Tour) will earn bonus points for beating the tour's average, starting with a 2-week preview. See the Dungeons tab.</li>
+          <li><b>Diamond Deliverer:</b> #1 in your division 3 weeks in a row (Monday to Sunday points, at least 2 shifts that week), or 10 perfect shifts in a row.</li>
+        </ul>
+      </div>
+    </div>
   </section>
+
+
 
   <section class="rl-sec rl-ms" id="days-sec">
     <div>
