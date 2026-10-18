@@ -93,7 +93,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 .rl-sec h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
 .rl-note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: 0 0 var(--cds-gap-md); max-width: 80ch; }
 .rl-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
-.rl-div { display: inline-flex; border: 1px solid var(--color-border-line); border-radius: 999px; padding: 3px; gap: 3px; margin-top: var(--cds-gap-md); }
+.rl-div { display: inline-flex; justify-self: start; border: 1px solid var(--color-border-line); border-radius: 999px; padding: 3px; gap: 3px; margin-top: var(--cds-gap-md); }
 .rl-div button { font: inherit; padding: var(--cds-pad-xs) var(--cds-pad-md); border-radius: 999px; border: 0; background: transparent; color: var(--color-fg); cursor: pointer; }
 .rl-div button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); }
 .rl-div button:focus-visible, .rl-tab:focus-visible, .rl-search:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
@@ -223,6 +223,23 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 #all { min-width: 44rem; } #all .rl-badges { min-width: 10rem; } #all .rl-mrow { min-width: 8rem; }
 .rl-mkey { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
 @media (max-width: 640px) { .rl-floor { grid-template-columns: 1fr; } .rl-floor .fl-h { grid-template-columns: auto 1fr; column-gap: 8px; align-items: center; } .rl-floor .fl-n { grid-row: span 2; } }
+.rl-nav { position: sticky; top: 0; z-index: 20; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding: 6px; margin: 0 calc(-1 * var(--cds-pad-xs)); background: var(--color-bg); border-bottom: 1px solid var(--color-border-line); }
+.rl-nav::-webkit-scrollbar { display: none; }
+.rl-nav button { font: inherit; font-weight: var(--cds-font-weight-medium); flex: 1 0 auto; white-space: nowrap; padding: 9px 14px; border: 0; border-radius: 999px; background: transparent; color: var(--color-fg-muted); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.rl-nav button[aria-selected="true"] { background: var(--color-fg); color: var(--color-bg); }
+.rl-nav button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+.rl-nav .sm { display: none; }
+@media (max-width: 520px) { .rl-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); } .rl-nav button { padding: 9px 4px; font-size: 14px; } .rl-nav .lg { display: none; } .rl-nav .sm { display: inline; } }
+.rl-panel { display: grid; gap: var(--cds-gap-xl); grid-template-columns: minmax(0, 1fr); }
+.rl-panel > * { min-width: 0; }
+.rl-panel[hidden] { display: none; }
+.rl-home-list { display: grid; gap: 0; }
+.rl-home-list .hl { display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 10px 4px; border-bottom: 1px solid var(--color-border-line); }
+.rl-home-list .hl:last-child { border-bottom: 0; }
+.rl-home-list .hl .rk { color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); }
+.rl-home-list .hl .pt { font-weight: var(--cds-font-weight-medium); }
+.rl-more { font: inherit; margin-top: var(--cds-gap-sm); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--color-border-line); background: transparent; color: var(--color-fg); cursor: pointer; }
+.rl-more:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 .rl-fail { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: 6rem; }
@@ -248,11 +265,20 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
   <header class="rl-head" id="top">
     <h1>PORT Rider League</h1>
     <p id="takeaway" data-source="league_summary" class="dash-skeleton">—</p>
-    <div class="rl-div" role="group" aria-label="Division">
-      <button data-div="D2D" aria-pressed="true">Doorstep (D2D)</button>
-      <button data-div="OOH" aria-pressed="false">Lockers (OOH)</button>
-    </div>
   </header>
+
+  <nav class="rl-nav" role="tablist" aria-label="Rider League sections">
+    <button role="tab" id="tab-home" data-tab="home" aria-controls="panel-home" aria-selected="true">Home</button>
+    <button role="tab" id="tab-boards" data-tab="boards" aria-controls="panel-boards" aria-selected="false"><span class="lg">Leaderboards</span><span class="sm">Boards</span></button>
+    <button role="tab" id="tab-dungeons" data-tab="dungeons" aria-controls="panel-dungeons" aria-selected="false">Dungeons</button>
+    <button role="tab" id="tab-levels" data-tab="levels" aria-controls="panel-levels" aria-selected="false"><span class="lg">Levels &amp; badges</span><span class="sm">Levels</span></button>
+  </nav>
+
+  <div class="rl-panel" id="panel-home" role="tabpanel" aria-labelledby="tab-home">
+  <div class="rl-div" role="group" aria-label="Division">
+    <button data-div="D2D" aria-pressed="true">Doorstep (D2D)</button>
+    <button data-div="OOH" aria-pressed="false">Lockers (OOH)</button>
+  </div>
 
   <section class="rl-sec" id="diamond-sec" aria-label="Diamond Deliverer">
     <div id="diamond" data-source="league"></div>
@@ -260,9 +286,22 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 
   <section class="rl-sec" id="podium-sec">
     <h2 id="podium-h">Top of the Doorstep division · last 28 days</h2>
-    <p class="rl-note">Points: 1 per parcel delivered, +30 for a perfect shift, +20 for leaving the hub before 11:30, +15 for leading a training shift with a new rider, +10 for checking in at the hub by 09:30 (+5 by 10:30). Each division only counts its own shifts, so riders who do both appear in both. Updated every weekday before 09:00 and again around 18:30; evening on-time (EDW) scores come from the de-briefs and are swapped for InPost's official scores the next morning.</p>
+    <p class="rl-note">Points over the last 28 days. Updated every weekday before 09:00 and again around 18:30.</p>
     <div class="rl-podium" id="podium" data-source="league"></div>
   </section>
+
+  <section class="rl-sec" id="home-board-sec">
+    <h2 id="home-board-h">Rest of the top 10</h2>
+    <div class="rl-card rl-home-list" id="home-board" data-source="league"></div>
+    <button class="rl-more" type="button" data-goto="boards">See every leaderboard →</button>
+  </section>
+  </div>
+
+  <div class="rl-panel" id="panel-boards" role="tabpanel" aria-labelledby="tab-boards" hidden>
+  <div class="rl-div" role="group" aria-label="Division">
+    <button data-div="D2D" aria-pressed="true">Doorstep (D2D)</button>
+    <button data-div="OOH" aria-pressed="false">Lockers (OOH)</button>
+  </div>
 
   <section class="rl-sec" id="boards">
     <h2 id="boards-h">Doorstep leaderboards · last 28 days</h2>
@@ -276,6 +315,35 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     </div>
   </section>
 
+  <section class="rl-sec rl-grid2" id="arrival-sec">
+    <div class="rl-card">
+      <h2>Arrival time vs rating</h2>
+      <p class="rl-note">Each dot is a rider in a division: average hub check-in over the last 28 days (left = earlier) against their rating in that division. 2+ recorded check-ins.</p>
+      <div class="rl-legend"><span><i id="lg0"></i>Doorstep (D2D)</span><span><i id="lg1"></i>Lockers (OOH)</span></div>
+      <div class="rl-chart" id="arrival" data-source="league"></div>
+    </div>
+    <div class="rl-card">
+      <h2>How to climb</h2>
+      <div class="rl-rules">
+        <table class="rl-pts-table"><tbody>
+          <tr><td>Each parcel delivered</td><td class="n">+1</td></tr>
+          <tr><td>Perfect shift</td><td class="n">+30</td></tr>
+          <tr><td>Leave the hub before 11:30</td><td class="n">+20</td></tr>
+          <tr><td>Lead a training shift (a new rider shadows you)</td><td class="n">+15</td></tr>
+          <tr><td>Check in at the hub by 09:30</td><td class="n">+10</td></tr>
+          <tr><td>Check in at the hub by 10:30</td><td class="n">+5</td></tr>
+        </tbody></table>
+        <ul>
+          <li><b>Perfect shift:</b> a solo shift with 50+ parcels taken out, or a lead (training) shift with 40+, and 98%+ delivered. On doorstep shifts you also need 95%+ inside InPost's delivery window (EDW). Shifts still waiting for their scores don't count yet, and don't break a streak.</li>
+          <li><b>Tour Dungeons:</b> harder tours (Level 2 to Boss Tour) will earn bonus points for beating the tour's average, starting with a 2-week preview. See the Dungeons tab.</li>
+          <li><b>Diamond Deliverer:</b> #1 in your division 3 weeks in a row (Monday to Sunday points, at least 2 shifts that week), or 10 perfect shifts in a row.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <div class="rl-panel" id="panel-dungeons" role="tabpanel" aria-labelledby="tab-dungeons" hidden>
   <section class="rl-sec" id="dungeons">
     <h2>Tour Dungeons</h2>
     <p class="rl-note">How hard each doorstep tour is, from the last 8 weeks of shifts on that tour: failed deliveries, on-time window (EDW) and minutes per parcel, each compared with the other tours, plus a terrain bonus for things the numbers miss. A tour needs 8 shifts to get a level. Tap a tour for its details.</p>
@@ -299,6 +367,9 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     <div class="rl-side" id="sidequests" data-source="league"></div>
   </section>
 
+  </div>
+
+  <div class="rl-panel" id="panel-levels" role="tabpanel" aria-labelledby="tab-levels" hidden>
   <section class="rl-sec" id="levels">
     <h2>Levels</h2>
     <p class="rl-note">Your level comes from all the tours you've done for PORT and your rating since July, and it's the same in both divisions. Doorstep rating = 40% on-time window (EDW) + 40% delivery success + 20% photo compliance; lockers rating = delivery success.</p>
@@ -323,32 +394,6 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     <div class="rl-card"><h2>Next up</h2><p class="rl-note">Riders closest to their next parcels milestone.</p><div class="rl-next" id="parcels-next" data-source="league"></div></div>
   </section>
 
-  <section class="rl-sec rl-grid2" id="arrival-sec">
-    <div class="rl-card">
-      <h2>Arrival time vs rating</h2>
-      <p class="rl-note">Each dot is a rider in a division: average hub check-in over the last 28 days (left = earlier) against their rating in that division. 2+ recorded check-ins.</p>
-      <div class="rl-legend"><span><i id="lg0"></i>Doorstep (D2D)</span><span><i id="lg1"></i>Lockers (OOH)</span></div>
-      <div class="rl-chart" id="arrival" data-source="league"></div>
-    </div>
-    <div class="rl-card">
-      <h2>How to climb</h2>
-      <div class="rl-rules">
-        <table class="rl-pts-table"><tbody>
-          <tr><td>Each parcel delivered</td><td class="n">+1</td></tr>
-          <tr><td>Perfect shift</td><td class="n">+30</td></tr>
-          <tr><td>Leave the hub before 11:30</td><td class="n">+20</td></tr>
-          <tr><td>Lead a training shift (a new rider shadows you)</td><td class="n">+15</td></tr>
-          <tr><td>Check in at the hub by 09:30</td><td class="n">+10</td></tr>
-          <tr><td>Check in at the hub by 10:30</td><td class="n">+5</td></tr>
-        </tbody></table>
-        <ul>
-          <li><b>Perfect shift:</b> a solo shift with 50+ parcels taken out, or a lead (training) shift with 40+, and 98%+ delivered. On doorstep shifts you also need 95%+ inside InPost's delivery window (EDW). Shifts still waiting for their scores don't count yet, and don't break a streak.</li>
-          <li><b>Tour Dungeons:</b> harder tours (Level 2 to Boss Tour) will earn bonus points for beating the tour's average, starting with a 2-week preview. See Tour Dungeons above.</li>
-          <li><b>Diamond Deliverer:</b> #1 in your division 3 weeks in a row (Monday to Sunday points, at least 2 shifts that week), or 10 perfect shifts in a row.</li>
-        </ul>
-      </div>
-    </div>
-  </section>
 
   <section class="rl-sec" id="badge-sec">
     <h2>Badges</h2>
@@ -367,6 +412,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
       </table>
     </div>
   </section>
+  </div>
 </div>
 
 <script>
@@ -550,11 +596,11 @@ function drawTabs() {
 }
 document.querySelectorAll('.rl-div button').forEach((b) => b.addEventListener('click', () => {
   div = b.dataset.div;
-  document.querySelectorAll('.rl-div button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  document.querySelectorAll('.rl-div button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.div === div)));
   if (!BOARDS[div][board]) board = 'points';
   document.getElementById('podium-h').textContent = `Top of the ${DIV[div]} division · last 28 days`;
   document.getElementById('boards-h').textContent = `${DIV[div]} leaderboards · last 28 days`;
-  drawTabs(); drawPodium(); drawBoard();
+  drawTabs(); drawPodium(); drawHomeBoard(); drawBoard();
 }));
 const search = document.getElementById('rl-search');
 search.addEventListener('input', () => drawAll());
@@ -779,6 +825,41 @@ function drawDungeons() {
   }
 }
 
+/* ---------- tabs ---------- */
+const TABS = ['home', 'boards', 'dungeons', 'levels'];
+let tab = 'home';
+try { const h = (location.hash || '').slice(1); const s = localStorage.getItem('rl-tab'); tab = TABS.includes(h) ? h : (TABS.includes(s) ? s : 'home'); } catch (e) {}
+function showTab(t, scroll) {
+  tab = TABS.includes(t) ? t : 'home';
+  document.querySelectorAll('.rl-nav [role=tab]').forEach((b) => { const on = b.dataset.tab === tab; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+  TABS.forEach((x) => { const p = document.getElementById(`panel-${x}`); if (p) p.hidden = x !== tab; });
+  try { localStorage.setItem('rl-tab', tab); } catch (e) {}
+  try { history.replaceState(null, '', `#${tab}`); } catch (e) {}
+  if (tab === 'boards') drawArrival();
+  if (scroll) { const n = document.querySelector('.rl-nav'); if (n && n.getBoundingClientRect().top < 0) n.scrollIntoView({ block: 'start' }); }
+}
+document.querySelectorAll('.rl-nav [role=tab]').forEach((b) => {
+  b.addEventListener('click', () => showTab(b.dataset.tab, true));
+  b.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const i = TABS.indexOf(tab) + (e.key === 'ArrowRight' ? 1 : -1); const t = TABS[(i + TABS.length) % TABS.length];
+    showTab(t, true); document.getElementById(`tab-${t}`).focus();
+  });
+});
+document.querySelectorAll('[data-goto]').forEach((b) => b.addEventListener('click', () => { showTab(b.dataset.goto, true); board = 'points'; drawTabs(); drawBoard(); }));
+function drawHomeBoard() {
+  const box = document.getElementById('home-board'); if (!box) return;
+  const d = dash.data('league'); if (d.status !== 'ok') { fail(box, d.status); return; }
+  const list = rows().filter((r) => r.division === div && min3(r)).sort((a, b) => b.d_points_28d - a.d_points_28d).slice(3, 10);
+  document.getElementById('home-board-h').textContent = `${DIV[div]} · places 4 to 10`;
+  if (!list.length) { box.replaceChildren(el('div', 'rl-note', 'Only the podium has 3+ shifts so far.')); return; }
+  box.replaceChildren(...list.map((r, i) => {
+    const row = el('div', 'hl'); const lv = el('span'); lvl(lv, r.level);
+    row.append(el('span', 'rk', String(i + 4)), el('span', null, r.rider), lv, el('span', 'pt', fmtInt(r.d_points_28d)));
+    return row;
+  }));
+}
+
 function drawAll() {
   const body = document.querySelector('#all tbody');
   const d = dash.data('league'); if (d.status !== 'ok') { body.replaceChildren(); return; }
@@ -796,7 +877,8 @@ function drawAll() {
 
 drawTabs();
 drawBadgeLegend();
-dash.onData(() => { drawTakeaway(); drawDiamond(); drawPodium(); drawBoard(); drawLadder(); drawMilestones('days'); drawMilestones('parcels'); drawArrival(); drawDungeons(); drawAll(); });
+dash.onData(() => { drawTakeaway(); drawDiamond(); drawPodium(); drawBoard(); drawLadder(); drawMilestones('days'); drawMilestones('parcels'); drawHomeBoard(); if (tab === 'boards') drawArrival(); drawDungeons(); drawAll(); });
+showTab(tab, false);
 </script>
 
 </div>
