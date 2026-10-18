@@ -364,7 +364,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 
   <nav class="rl-nav" role="tablist" aria-label="LeagueBoard sections">
     <button role="tab" id="tab-home" data-tab="home" aria-controls="panel-home" aria-selected="true">Home</button>
-    <button role="tab" id="tab-boards" data-tab="boards" aria-controls="panel-boards" aria-selected="false"><span class="lg">LeagueBoard</span><span class="sm">LeagueBoard</span></button>
+    <button role="tab" id="tab-boards" data-tab="boards" aria-controls="panel-boards" aria-selected="false"><span class="lg">Every rider</span><span class="sm">Riders</span></button>
     <button role="tab" id="tab-dungeons" data-tab="dungeons" aria-controls="panel-dungeons" aria-selected="false">Dungeons</button>
     <button role="tab" id="tab-levels" data-tab="levels" aria-controls="panel-levels" aria-selected="false"><span class="lg">Levels &amp; badges</span><span class="sm">Levels</span></button>
   </nav>
@@ -388,15 +388,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
   <section class="rl-sec" id="home-board-sec">
     <h2 id="home-board-h">Rest of the top 10</h2>
     <div class="rl-card rl-home-list" id="home-board" data-source="league"></div>
-    <button class="rl-more" type="button" data-goto="boards">Open the LeagueBoard →</button>
   </section>
-  </div>
-
-  <div class="rl-panel" id="panel-boards" role="tabpanel" aria-labelledby="tab-boards" hidden>
-  <div class="rl-div" role="group" aria-label="Division">
-    <button data-div="D2D" aria-pressed="true">Doorstep (D2D)</button>
-    <button data-div="OOH" aria-pressed="false">Lockers (OOH)</button>
-  </div>
 
   <section class="rl-sec" id="boards">
     <h2 id="boards-h">Doorstep leaderboards · last 28 days</h2>
@@ -408,7 +400,17 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
         <tbody></tbody>
       </table>
     </div>
+    <button class="rl-more" type="button" data-goto="boards">See every rider →</button>
   </section>
+  </div>
+
+  <div class="rl-panel" id="panel-boards" role="tabpanel" aria-labelledby="tab-boards" hidden>
+  <div class="rl-div" role="group" aria-label="Division">
+    <button data-div="D2D" aria-pressed="true">Doorstep (D2D)</button>
+    <button data-div="OOH" aria-pressed="false">Lockers (OOH)</button>
+  </div>
+
+
 
   <section class="rl-sec" id="riders">
     <h2>Every rider</h2>
