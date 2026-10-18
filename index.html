@@ -20,6 +20,23 @@ body{padding:max(12px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inse
 .app-bar{max-width:1180px;margin:0 auto 12px;display:flex;align-items:center;justify-content:space-between;gap:12px;font:13px/1.3 var(--font-anthropic-sans);color:var(--color-fg-muted)}
 .app-bar button{font:inherit;color:var(--color-fg);background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:999px;padding:6px 14px;cursor:pointer}
 .app-bar .stale{color:var(--color-bad)}
+.app-bar .btns{display:flex;gap:8px}
+.share-dlg{border:0;border-radius:16px;padding:0;width:min(420px,calc(100vw - 32px));background:var(--color-panel);color:var(--color-fg);box-shadow:0 20px 60px rgba(0,0,0,.35);font:15px/1.4 var(--font-anthropic-sans)}
+.share-dlg::backdrop{background:rgba(10,12,20,.55)}
+.share-dlg .in{padding:20px;display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+.share-dlg h2{margin:0;font:400 22px/1.2 var(--font-anthropic-serif)}
+.share-dlg p{margin:0;color:var(--color-fg-muted);font-size:14px}
+.share-dlg .row{display:flex;gap:8px}
+.share-dlg input{flex:1;min-width:0;width:100%;box-sizing:border-box;font:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--color-border-line);border-radius:10px;background:var(--color-bg);color:var(--color-fg)}
+.share-dlg button{font:inherit;font-size:14px;padding:10px 14px;border-radius:10px;border:1px solid var(--color-border-line);background:var(--color-bg);color:var(--color-fg);cursor:pointer;white-space:nowrap}
+.share-dlg button.primary{background:#161b2d;color:#fff;border-color:#161b2d}
+.share-dlg .qr{justify-self:center;display:grid;justify-items:center;gap:6px;font-size:13px;color:var(--color-fg-muted)}
+.share-dlg .qr svg{width:180px;height:180px;border-radius:8px}
+.share-dlg details{font-size:14px}
+.share-dlg summary{cursor:pointer;font-weight:600}
+.share-dlg ol{margin:8px 0 0;padding-left:20px;display:grid;gap:4px;color:var(--color-fg-muted)}
+.share-dlg .close{justify-self:end}
+.share-dlg .done{color:#1f7a45;font-size:13px;min-height:1em}
 .dash-skeleton{opacity:.5}</style>
 <script src="d3.min.js"></script>
 
@@ -49,7 +66,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     el.classList.toggle('stale', hrs > 36);
   }
   /* App updates: if a newer version of this page is online, reload into it (no reinstall needed). */
-  window.APP_VERSION = '2026-10-18d';
+  window.APP_VERSION = '2026-10-18e';
   let checking = false;
   async function checkUpdate() {
     if (checking) return; checking = true;
@@ -61,6 +78,25 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
         location.reload(); return;
       }
     } catch (e) {} finally { checking = false; }
+  }
+  /* Share the app with new joiners */
+  const SHARE_URL = 'https://obiportninja.github.io/PORT-RIDER-LEAGUEBOARD/';
+  const SHARE_TEXT = 'PORT Rider League: points, leaderboards, tour dungeons and badges for PORT riders. Open the link, then add it to your home screen.';
+  function initShare() {
+    const dlg = document.getElementById('share-dlg'); const btn = document.getElementById('app-share'); if (!dlg || !btn) return;
+    const input = document.getElementById('share-url'); const done = document.getElementById('share-done');
+    input.value = SHARE_URL;
+    const nat = document.getElementById('share-native');
+    if (navigator.share) { nat.hidden = false; nat.addEventListener('click', async () => { try { await navigator.share({ title: 'PORT Rider League', text: SHARE_TEXT, url: SHARE_URL }); done.textContent = 'Shared.'; } catch (e) {} }); }
+    document.getElementById('share-copy').addEventListener('click', async () => {
+      let ok = false;
+      try { await navigator.clipboard.writeText(SHARE_URL); ok = true; } catch (e) {}
+      if (!ok) { try { input.focus(); input.select(); input.setSelectionRange(0, 999); ok = document.execCommand('copy'); } catch (e) {} }
+      done.textContent = ok ? 'Link copied. Paste it into WhatsApp or a text.' : 'Press and hold the link to copy it.';
+    });
+    btn.addEventListener('click', () => { done.textContent = ''; if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', ''); });
+    document.getElementById('share-close').addEventListener('click', () => dlg.close ? dlg.close() : dlg.removeAttribute('open'));
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
   }
   function apply(j, fromCache) {
     DATA = Array.isArray(j) ? j : (j.rows || []);
@@ -81,7 +117,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
   }
   window.addEventListener('load', () => {
     load();
-    checkUpdate();
+    checkUpdate(); initShare();
     const b = document.getElementById('app-refresh'); if (b) b.addEventListener('click', () => { load(); checkUpdate(); });
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { load(); checkUpdate(); } });
   });
@@ -90,7 +126,19 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 </script>
 </head>
 <body>
-<div class="app-bar"><span id="app-updated">Loading…</span><button id="app-refresh" type="button">Refresh</button></div>
+<div class="app-bar"><span id="app-updated">Loading…</span><span class="btns"><button id="app-share" type="button" aria-haspopup="dialog">Share</button><button id="app-refresh" type="button">Refresh</button></span></div>
+<dialog class="share-dlg" id="share-dlg" aria-labelledby="share-h">
+  <div class="in">
+    <h2 id="share-h">Share the Rider League</h2>
+    <p>Send this link to new riders. It opens on any phone, with no login.</p>
+    <div class="row"><input id="share-url" type="text" readonly aria-label="Rider League link"><button class="primary" id="share-copy" type="button">Copy link</button></div>
+    <button id="share-native" type="button" hidden>Share via WhatsApp, text…</button>
+    <div class="done" id="share-done" role="status" aria-live="polite"></div>
+    <div class="qr"><svg viewBox="0 0 37 37" width="200" height="200" role="img" aria-label="QR code for the Rider League link" shape-rendering="crispEdges"><rect width="37" height="37" fill="#fff"/><path d="M2,2h1v1h-1zM3,2h1v1h-1zM4,2h1v1h-1zM5,2h1v1h-1zM6,2h1v1h-1zM7,2h1v1h-1zM8,2h1v1h-1zM12,2h1v1h-1zM15,2h1v1h-1zM16,2h1v1h-1zM19,2h1v1h-1zM20,2h1v1h-1zM23,2h1v1h-1zM28,2h1v1h-1zM29,2h1v1h-1zM30,2h1v1h-1zM31,2h1v1h-1zM32,2h1v1h-1zM33,2h1v1h-1zM34,2h1v1h-1zM2,3h1v1h-1zM8,3h1v1h-1zM10,3h1v1h-1zM18,3h1v1h-1zM20,3h1v1h-1zM28,3h1v1h-1zM34,3h1v1h-1zM2,4h1v1h-1zM4,4h1v1h-1zM5,4h1v1h-1zM6,4h1v1h-1zM8,4h1v1h-1zM10,4h1v1h-1zM12,4h1v1h-1zM16,4h1v1h-1zM17,4h1v1h-1zM21,4h1v1h-1zM22,4h1v1h-1zM25,4h1v1h-1zM28,4h1v1h-1zM30,4h1v1h-1zM31,4h1v1h-1zM32,4h1v1h-1zM34,4h1v1h-1zM2,5h1v1h-1zM4,5h1v1h-1zM5,5h1v1h-1zM6,5h1v1h-1zM8,5h1v1h-1zM10,5h1v1h-1zM16,5h1v1h-1zM17,5h1v1h-1zM18,5h1v1h-1zM20,5h1v1h-1zM21,5h1v1h-1zM22,5h1v1h-1zM23,5h1v1h-1zM25,5h1v1h-1zM26,5h1v1h-1zM28,5h1v1h-1zM30,5h1v1h-1zM31,5h1v1h-1zM32,5h1v1h-1zM34,5h1v1h-1zM2,6h1v1h-1zM4,6h1v1h-1zM5,6h1v1h-1zM6,6h1v1h-1zM8,6h1v1h-1zM13,6h1v1h-1zM15,6h1v1h-1zM16,6h1v1h-1zM17,6h1v1h-1zM18,6h1v1h-1zM22,6h1v1h-1zM23,6h1v1h-1zM28,6h1v1h-1zM30,6h1v1h-1zM31,6h1v1h-1zM32,6h1v1h-1zM34,6h1v1h-1zM2,7h1v1h-1zM8,7h1v1h-1zM11,7h1v1h-1zM12,7h1v1h-1zM13,7h1v1h-1zM14,7h1v1h-1zM15,7h1v1h-1zM16,7h1v1h-1zM17,7h1v1h-1zM19,7h1v1h-1zM21,7h1v1h-1zM23,7h1v1h-1zM26,7h1v1h-1zM28,7h1v1h-1zM34,7h1v1h-1zM2,8h1v1h-1zM3,8h1v1h-1zM4,8h1v1h-1zM5,8h1v1h-1zM6,8h1v1h-1zM7,8h1v1h-1zM8,8h1v1h-1zM10,8h1v1h-1zM12,8h1v1h-1zM14,8h1v1h-1zM16,8h1v1h-1zM18,8h1v1h-1zM20,8h1v1h-1zM22,8h1v1h-1zM24,8h1v1h-1zM26,8h1v1h-1zM28,8h1v1h-1zM29,8h1v1h-1zM30,8h1v1h-1zM31,8h1v1h-1zM32,8h1v1h-1zM33,8h1v1h-1zM34,8h1v1h-1zM10,9h1v1h-1zM11,9h1v1h-1zM13,9h1v1h-1zM14,9h1v1h-1zM16,9h1v1h-1zM17,9h1v1h-1zM18,9h1v1h-1zM21,9h1v1h-1zM22,9h1v1h-1zM2,10h1v1h-1zM8,10h1v1h-1zM10,10h1v1h-1zM12,10h1v1h-1zM13,10h1v1h-1zM14,10h1v1h-1zM15,10h1v1h-1zM19,10h1v1h-1zM21,10h1v1h-1zM24,10h1v1h-1zM26,10h1v1h-1zM27,10h1v1h-1zM28,10h1v1h-1zM31,10h1v1h-1zM32,10h1v1h-1zM33,10h1v1h-1zM2,11h1v1h-1zM3,11h1v1h-1zM4,11h1v1h-1zM5,11h1v1h-1zM10,11h1v1h-1zM12,11h1v1h-1zM15,11h1v1h-1zM16,11h1v1h-1zM17,11h1v1h-1zM19,11h1v1h-1zM20,11h1v1h-1zM21,11h1v1h-1zM22,11h1v1h-1zM25,11h1v1h-1zM30,11h1v1h-1zM31,11h1v1h-1zM32,11h1v1h-1zM34,11h1v1h-1zM4,12h1v1h-1zM6,12h1v1h-1zM7,12h1v1h-1zM8,12h1v1h-1zM10,12h1v1h-1zM11,12h1v1h-1zM15,12h1v1h-1zM16,12h1v1h-1zM17,12h1v1h-1zM19,12h1v1h-1zM22,12h1v1h-1zM24,12h1v1h-1zM26,12h1v1h-1zM28,12h1v1h-1zM30,12h1v1h-1zM32,12h1v1h-1zM34,12h1v1h-1zM2,13h1v1h-1zM5,13h1v1h-1zM6,13h1v1h-1zM10,13h1v1h-1zM11,13h1v1h-1zM12,13h1v1h-1zM13,13h1v1h-1zM15,13h1v1h-1zM17,13h1v1h-1zM18,13h1v1h-1zM19,13h1v1h-1zM20,13h1v1h-1zM24,13h1v1h-1zM26,13h1v1h-1zM27,13h1v1h-1zM29,13h1v1h-1zM30,13h1v1h-1zM31,13h1v1h-1zM32,13h1v1h-1zM2,14h1v1h-1zM3,14h1v1h-1zM7,14h1v1h-1zM8,14h1v1h-1zM11,14h1v1h-1zM15,14h1v1h-1zM19,14h1v1h-1zM21,14h1v1h-1zM25,14h1v1h-1zM33,14h1v1h-1zM2,15h1v1h-1zM5,15h1v1h-1zM7,15h1v1h-1zM9,15h1v1h-1zM10,15h1v1h-1zM12,15h1v1h-1zM13,15h1v1h-1zM19,15h1v1h-1zM20,15h1v1h-1zM24,15h1v1h-1zM27,15h1v1h-1zM29,15h1v1h-1zM33,15h1v1h-1zM34,15h1v1h-1zM4,16h1v1h-1zM6,16h1v1h-1zM8,16h1v1h-1zM9,16h1v1h-1zM10,16h1v1h-1zM13,16h1v1h-1zM14,16h1v1h-1zM17,16h1v1h-1zM18,16h1v1h-1zM20,16h1v1h-1zM22,16h1v1h-1zM23,16h1v1h-1zM24,16h1v1h-1zM27,16h1v1h-1zM28,16h1v1h-1zM33,16h1v1h-1zM2,17h1v1h-1zM3,17h1v1h-1zM6,17h1v1h-1zM13,17h1v1h-1zM18,17h1v1h-1zM22,17h1v1h-1zM24,17h1v1h-1zM27,17h1v1h-1zM29,17h1v1h-1zM30,17h1v1h-1zM31,17h1v1h-1zM32,17h1v1h-1zM34,17h1v1h-1zM4,18h1v1h-1zM5,18h1v1h-1zM6,18h1v1h-1zM8,18h1v1h-1zM9,18h1v1h-1zM10,18h1v1h-1zM11,18h1v1h-1zM17,18h1v1h-1zM19,18h1v1h-1zM24,18h1v1h-1zM27,18h1v1h-1zM29,18h1v1h-1zM30,18h1v1h-1zM31,18h1v1h-1zM34,18h1v1h-1zM2,19h1v1h-1zM4,19h1v1h-1zM7,19h1v1h-1zM9,19h1v1h-1zM10,19h1v1h-1zM11,19h1v1h-1zM12,19h1v1h-1zM13,19h1v1h-1zM15,19h1v1h-1zM16,19h1v1h-1zM17,19h1v1h-1zM21,19h1v1h-1zM22,19h1v1h-1zM25,19h1v1h-1zM28,19h1v1h-1zM31,19h1v1h-1zM32,19h1v1h-1zM34,19h1v1h-1zM5,20h1v1h-1zM8,20h1v1h-1zM9,20h1v1h-1zM10,20h1v1h-1zM14,20h1v1h-1zM16,20h1v1h-1zM17,20h1v1h-1zM18,20h1v1h-1zM19,20h1v1h-1zM20,20h1v1h-1zM21,20h1v1h-1zM22,20h1v1h-1zM23,20h1v1h-1zM25,20h1v1h-1zM27,20h1v1h-1zM28,20h1v1h-1zM29,20h1v1h-1zM31,20h1v1h-1zM32,20h1v1h-1zM33,20h1v1h-1zM3,21h1v1h-1zM4,21h1v1h-1zM6,21h1v1h-1zM7,21h1v1h-1zM10,21h1v1h-1zM11,21h1v1h-1zM12,21h1v1h-1zM13,21h1v1h-1zM14,21h1v1h-1zM17,21h1v1h-1zM21,21h1v1h-1zM24,21h1v1h-1zM26,21h1v1h-1zM30,21h1v1h-1zM31,21h1v1h-1zM32,21h1v1h-1zM33,21h1v1h-1zM34,21h1v1h-1zM3,22h1v1h-1zM4,22h1v1h-1zM7,22h1v1h-1zM8,22h1v1h-1zM9,22h1v1h-1zM12,22h1v1h-1zM13,22h1v1h-1zM14,22h1v1h-1zM17,22h1v1h-1zM20,22h1v1h-1zM21,22h1v1h-1zM25,22h1v1h-1zM27,22h1v1h-1zM28,22h1v1h-1zM29,22h1v1h-1zM30,22h1v1h-1zM31,22h1v1h-1zM33,22h1v1h-1zM2,23h1v1h-1zM3,23h1v1h-1zM5,23h1v1h-1zM6,23h1v1h-1zM10,23h1v1h-1zM11,23h1v1h-1zM14,23h1v1h-1zM15,23h1v1h-1zM16,23h1v1h-1zM23,23h1v1h-1zM26,23h1v1h-1zM31,23h1v1h-1zM32,23h1v1h-1zM2,24h1v1h-1zM8,24h1v1h-1zM9,24h1v1h-1zM10,24h1v1h-1zM16,24h1v1h-1zM21,24h1v1h-1zM24,24h1v1h-1zM25,24h1v1h-1zM26,24h1v1h-1zM27,24h1v1h-1zM28,24h1v1h-1zM29,24h1v1h-1zM31,24h1v1h-1zM32,24h1v1h-1zM33,24h1v1h-1zM2,25h1v1h-1zM5,25h1v1h-1zM6,25h1v1h-1zM14,25h1v1h-1zM16,25h1v1h-1zM17,25h1v1h-1zM18,25h1v1h-1zM20,25h1v1h-1zM21,25h1v1h-1zM22,25h1v1h-1zM25,25h1v1h-1zM27,25h1v1h-1zM28,25h1v1h-1zM30,25h1v1h-1zM32,25h1v1h-1zM34,25h1v1h-1zM2,26h1v1h-1zM3,26h1v1h-1zM4,26h1v1h-1zM5,26h1v1h-1zM6,26h1v1h-1zM7,26h1v1h-1zM8,26h1v1h-1zM10,26h1v1h-1zM11,26h1v1h-1zM12,26h1v1h-1zM13,26h1v1h-1zM16,26h1v1h-1zM18,26h1v1h-1zM22,26h1v1h-1zM26,26h1v1h-1zM27,26h1v1h-1zM28,26h1v1h-1zM29,26h1v1h-1zM30,26h1v1h-1zM31,26h1v1h-1zM32,26h1v1h-1zM10,27h1v1h-1zM11,27h1v1h-1zM14,27h1v1h-1zM16,27h1v1h-1zM17,27h1v1h-1zM18,27h1v1h-1zM19,27h1v1h-1zM20,27h1v1h-1zM21,27h1v1h-1zM22,27h1v1h-1zM23,27h1v1h-1zM26,27h1v1h-1zM30,27h1v1h-1zM32,27h1v1h-1zM2,28h1v1h-1zM3,28h1v1h-1zM4,28h1v1h-1zM5,28h1v1h-1zM6,28h1v1h-1zM7,28h1v1h-1zM8,28h1v1h-1zM11,28h1v1h-1zM12,28h1v1h-1zM14,28h1v1h-1zM15,28h1v1h-1zM16,28h1v1h-1zM17,28h1v1h-1zM18,28h1v1h-1zM19,28h1v1h-1zM25,28h1v1h-1zM26,28h1v1h-1zM28,28h1v1h-1zM30,28h1v1h-1zM32,28h1v1h-1zM33,28h1v1h-1zM34,28h1v1h-1zM2,29h1v1h-1zM8,29h1v1h-1zM11,29h1v1h-1zM13,29h1v1h-1zM14,29h1v1h-1zM16,29h1v1h-1zM19,29h1v1h-1zM20,29h1v1h-1zM21,29h1v1h-1zM24,29h1v1h-1zM25,29h1v1h-1zM26,29h1v1h-1zM30,29h1v1h-1zM31,29h1v1h-1zM32,29h1v1h-1zM34,29h1v1h-1zM2,30h1v1h-1zM4,30h1v1h-1zM5,30h1v1h-1zM6,30h1v1h-1zM8,30h1v1h-1zM11,30h1v1h-1zM12,30h1v1h-1zM14,30h1v1h-1zM17,30h1v1h-1zM18,30h1v1h-1zM21,30h1v1h-1zM23,30h1v1h-1zM26,30h1v1h-1zM27,30h1v1h-1zM28,30h1v1h-1zM29,30h1v1h-1zM30,30h1v1h-1zM31,30h1v1h-1zM2,31h1v1h-1zM4,31h1v1h-1zM5,31h1v1h-1zM6,31h1v1h-1zM8,31h1v1h-1zM11,31h1v1h-1zM19,31h1v1h-1zM20,31h1v1h-1zM23,31h1v1h-1zM27,31h1v1h-1zM29,31h1v1h-1zM30,31h1v1h-1zM33,31h1v1h-1zM2,32h1v1h-1zM4,32h1v1h-1zM5,32h1v1h-1zM6,32h1v1h-1zM8,32h1v1h-1zM11,32h1v1h-1zM12,32h1v1h-1zM13,32h1v1h-1zM15,32h1v1h-1zM16,32h1v1h-1zM17,32h1v1h-1zM19,32h1v1h-1zM20,32h1v1h-1zM21,32h1v1h-1zM22,32h1v1h-1zM23,32h1v1h-1zM24,32h1v1h-1zM25,32h1v1h-1zM26,32h1v1h-1zM27,32h1v1h-1zM29,32h1v1h-1zM30,32h1v1h-1zM31,32h1v1h-1zM33,32h1v1h-1zM34,32h1v1h-1zM2,33h1v1h-1zM8,33h1v1h-1zM11,33h1v1h-1zM16,33h1v1h-1zM20,33h1v1h-1zM24,33h1v1h-1zM26,33h1v1h-1zM27,33h1v1h-1zM28,33h1v1h-1zM29,33h1v1h-1zM30,33h1v1h-1zM31,33h1v1h-1zM32,33h1v1h-1zM2,34h1v1h-1zM3,34h1v1h-1zM4,34h1v1h-1zM5,34h1v1h-1zM6,34h1v1h-1zM7,34h1v1h-1zM8,34h1v1h-1zM10,34h1v1h-1zM11,34h1v1h-1zM12,34h1v1h-1zM15,34h1v1h-1zM17,34h1v1h-1zM18,34h1v1h-1zM19,34h1v1h-1zM24,34h1v1h-1zM25,34h1v1h-1zM27,34h1v1h-1zM28,34h1v1h-1zM29,34h1v1h-1zM33,34h1v1h-1z" fill="#111"/></svg><span>Or let them scan this in the hub</span></div>
+    <details><summary>Add it to your home screen</summary><ol><li><b>iPhone:</b> open the link in Safari, tap Share, then "Add to Home Screen".</li><li><b>Android:</b> open the link in Chrome, tap ⋮, then "Install app" or "Add to Home screen".</li></ol></details>
+    <button class="close" id="share-close" type="button">Close</button>
+  </div>
+</dialog>
 <div id="dash-root">
 <style>
 #dash-root { --dash-gutter: clamp(16px, 3vw, 32px); }
