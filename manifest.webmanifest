@@ -1,7 +1,7 @@
 {
- "name": "PORT Rider League",
- "short_name": "Rider League",
- "description": "Points, levels and badges for PORT riders.",
+ "name": "PORT Rider LeagueBoard",
+ "short_name": "LeagueBoard",
+ "description": "Points, levels, badges and The PORT Post newsletter for PORT riders.",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
