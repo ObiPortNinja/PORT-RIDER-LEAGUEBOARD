@@ -229,7 +229,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 .rl-nav button[aria-selected="true"] { background: var(--color-fg); color: var(--color-bg); }
 .rl-nav button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
 .rl-nav .sm { display: none; }
-@media (max-width: 520px) { .rl-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); } .rl-nav button { padding: 9px 4px; font-size: 14px; } .rl-nav .lg { display: none; } .rl-nav .sm { display: inline; } }
+@media (max-width: 520px) { .rl-nav { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; } .rl-nav button { padding: 9px 10px; font-size: 14px; } .rl-nav .lg { display: none; } .rl-nav .sm { display: inline; } }
 .rl-panel { display: grid; gap: var(--cds-gap-xl); grid-template-columns: minmax(0, 1fr); }
 .rl-panel > * { min-width: 0; }
 .rl-panel[hidden] { display: none; }
@@ -269,7 +269,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
 
   <nav class="rl-nav" role="tablist" aria-label="Rider League sections">
     <button role="tab" id="tab-home" data-tab="home" aria-controls="panel-home" aria-selected="true">Home</button>
-    <button role="tab" id="tab-boards" data-tab="boards" aria-controls="panel-boards" aria-selected="false"><span class="lg">Leaderboards</span><span class="sm">Boards</span></button>
+    <button role="tab" id="tab-boards" data-tab="boards" aria-controls="panel-boards" aria-selected="false"><span class="lg">LeagueBoard</span><span class="sm">LeagueBoard</span></button>
     <button role="tab" id="tab-dungeons" data-tab="dungeons" aria-controls="panel-dungeons" aria-selected="false">Dungeons</button>
     <button role="tab" id="tab-levels" data-tab="levels" aria-controls="panel-levels" aria-selected="false"><span class="lg">Levels &amp; badges</span><span class="sm">Levels</span></button>
   </nav>
@@ -293,7 +293,7 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
   <section class="rl-sec" id="home-board-sec">
     <h2 id="home-board-h">Rest of the top 10</h2>
     <div class="rl-card rl-home-list" id="home-board" data-source="league"></div>
-    <button class="rl-more" type="button" data-goto="boards">See every leaderboard →</button>
+    <button class="rl-more" type="button" data-goto="boards">Open the LeagueBoard →</button>
   </section>
   </div>
 
@@ -310,6 +310,18 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     <div class="rl-card rl-scroll">
       <table id="board" data-source="league" data-row-key="key">
         <thead><tr><th class="rank">#</th><th data-field="rider">Rider</th><th data-field="level">Level</th><th class="n" id="board-metric-th" data-field="d_points_28d">Points</th><th class="n hide-sm" data-field="d_shifts_28d">Shifts</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="rl-sec" id="riders">
+    <h2>Every rider</h2>
+    <p class="rl-note">Level, badges, the tours you know best and what's needed for the next level. Tap a badge or tour to see what it's for.</p>
+    <input class="rl-search" id="rl-search" type="search" placeholder="Search a name" aria-label="Search riders">
+    <div class="rl-card rl-scroll">
+      <table id="all" data-source="league" data-row-key="key">
+        <thead><tr><th data-field="rider">Rider</th><th data-field="level">Level</th><th class="hide-sm" data-field="pathway">Main division</th><th class="n" data-field="tours">Tours</th><th class="n hide-sm" data-field="days">Days</th><th class="n" data-field="rating_all">Rating</th><th data-field="badge_codes">Badges</th><th data-field="mastery">Tour mastery</th><th data-field="next_goal">Next level needs</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -401,17 +413,6 @@ window.LEAGUE_DATA_URL = window.LEAGUE_DATA_URL || 'league.json';
     <div class="rl-card rl-legend-badges" id="badge-legend"></div>
   </section>
 
-  <section class="rl-sec" id="riders">
-    <h2>Every rider</h2>
-    <p class="rl-note">Level, badges, the tours you know best and what's needed for the next level. Tap a badge or tour to see what it's for.</p>
-    <input class="rl-search" id="rl-search" type="search" placeholder="Search a name" aria-label="Search riders">
-    <div class="rl-card rl-scroll">
-      <table id="all" data-source="league" data-row-key="key">
-        <thead><tr><th data-field="rider">Rider</th><th data-field="level">Level</th><th class="hide-sm" data-field="pathway">Main division</th><th class="n" data-field="tours">Tours</th><th class="n hide-sm" data-field="days">Days</th><th class="n" data-field="rating_all">Rating</th><th data-field="badge_codes">Badges</th><th data-field="mastery">Tour mastery</th><th data-field="next_goal">Next level needs</th></tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </section>
   </div>
 </div>
 
@@ -458,7 +459,7 @@ const BOARDS = {
     success: { tab: 'Delivery success', label: 'Success', field: 'd_success_28d', show: (r) => fmtPct(r.d_success_28d), keep: (r) => min3(r) && r.d_success_28d != null, sort: (a, b) => b.d_success_28d - a.d_success_28d, note: 'Delivered ÷ taken out on doorstep tours. Riders with 3+ doorstep shifts.' },
     image: { tab: 'Photo compliance', label: 'Photos', field: 'd_image_28d', show: (r) => fmtPct(r.d_image_28d), keep: (r) => min3(r) && r.d_image_28d != null, sort: (a, b) => b.d_image_28d - a.d_image_28d, note: 'Share of proof-of-delivery photos that passed InPost checks. Riders with 3+ doorstep shifts.' },
     out: { tab: 'Out by 11:30', label: 'Shifts', field: 'd_departs_28d', show: (r) => String(r.d_departs_28d), keep: (r) => min3(r) && r.d_departs_28d > 0, sort: (a, b) => b.d_departs_28d - a.d_departs_28d || b.d_points_28d - a.d_points_28d, note: 'Doorstep shifts where the rider left the hub before 11:30 (+20 points each).' },
-    train: { tab: 'Trainers', label: 'Training shifts', field: 'd_leads_28d', show: (r) => String(r.d_leads_28d), keep: (r) => r.d_leads_28d > 0, sort: (a, b) => b.d_leads_28d - a.d_leads_28d || b.d_points_28d - a.d_points_28d, note: 'Doorstep shifts where the rider took a new rider out with them (+15 points each).' },
+    train: { tab: 'Trainers', label: 'All time', field: 'd_leads_all', show: (r) => String(r.d_leads_all ?? r.leads_all ?? 0), keep: (r) => (r.d_leads_all ?? 0) > 0, sort: (a, b) => (b.d_leads_all ?? 0) - (a.d_leads_all ?? 0) || b.d_points_28d - a.d_points_28d, note: 'Doorstep training shifts since July, where the rider took a new rider out with them. Counts once you have 10+ PORT tours. Each one is still +15 points in the 28-day table.' },
     early: { tab: 'Early bird', label: 'Avg check-in', field: 'd_checkin_min_28d', show: (r) => hhmm(r.d_checkin_min_28d), keep: (r) => r.d_checkins_28d >= 3 && r.d_checkin_min_28d != null, sort: (a, b) => a.d_checkin_min_28d - b.d_checkin_min_28d, note: 'Average hub check-in on doorstep shifts, riders with 3+ recorded check-ins.' },
   },
   OOH: {
@@ -467,18 +468,19 @@ const BOARDS = {
     success: { tab: 'Delivery success', label: 'Success', field: 'd_success_28d', show: (r) => fmtPct(r.d_success_28d), keep: (r) => min3(r) && r.d_success_28d != null, sort: (a, b) => b.d_success_28d - a.d_success_28d, note: 'Delivered ÷ taken out on lockers tours. Riders with 3+ lockers shifts.' },
     collected: { tab: 'Collections', label: 'Collected', field: 'd_collected_28d', show: (r) => fmtInt(r.d_collected_28d), keep: (r) => min3(r) && r.d_collected_28d != null, sort: (a, b) => b.d_collected_28d - a.d_collected_28d, note: 'Parcels collected from lockers and brought back to the hub. Riders with 3+ lockers shifts.' },
     out: { tab: 'Out by 11:30', label: 'Shifts', field: 'd_departs_28d', show: (r) => String(r.d_departs_28d), keep: (r) => min3(r) && r.d_departs_28d > 0, sort: (a, b) => b.d_departs_28d - a.d_departs_28d || b.d_points_28d - a.d_points_28d, note: 'Lockers shifts where the rider left the hub before 11:30 (+20 points each).' },
-    train: { tab: 'Trainers', label: 'Training shifts', field: 'd_leads_28d', show: (r) => String(r.d_leads_28d), keep: (r) => r.d_leads_28d > 0, sort: (a, b) => b.d_leads_28d - a.d_leads_28d || b.d_points_28d - a.d_points_28d, note: 'Lockers shifts where the rider took a new rider out with them to shadow (+15 points each).' },
+    train: { tab: 'Trainers', label: 'All time', field: 'd_leads_all', show: (r) => String(r.d_leads_all ?? r.leads_all ?? 0), keep: (r) => (r.d_leads_all ?? 0) > 0, sort: (a, b) => (b.d_leads_all ?? 0) - (a.d_leads_all ?? 0) || b.d_points_28d - a.d_points_28d, note: 'Lockers training shifts since July, where the rider took a new rider out with them. Counts once you have 10+ PORT tours. Each one is still +15 points in the 28-day table.' },
     early: { tab: 'Early bird', label: 'Avg check-in', field: 'd_checkin_min_28d', show: (r) => hhmm(r.d_checkin_min_28d), keep: (r) => r.d_checkins_28d >= 2 && r.d_checkin_min_28d != null, sort: (a, b) => a.d_checkin_min_28d - b.d_checkin_min_28d, note: 'Average hub check-in on lockers shifts, riders with 2+ recorded check-ins.' },
   },
 };
 const NUMS = ['tours', 'days', 'd_points_28d', 'd_delivered_28d', 'd_shifts_28d', 'd_checkins_28d', 'd_perfect_28d', 'd_departs_28d', 'd_leads_28d', 'leads_all', 'delivered_all', 'perfect_streak', 'top_weeks', 'weeks_at_1'];
+const NUMS_EXTRA = ['d_leads_all'];
 const NULLABLE = ['d_edw_28d', 'd_success_28d', 'd_image_28d', 'd_collected_28d', 'd_rating_28d', 'd_checkin_min_28d', 'rating_all'];
 const rows = () => {
   const d = dash.data('league');
   if (d.status !== 'ok') return [];
   return d.data.filter((r) => r.kind !== 'tour').map((r) => {
     const o = { ...r, primary: truthy(r.primary), diamond: truthy(r.diamond) };
-    NUMS.forEach((k) => { o[k] = +r[k] || 0; });
+    NUMS.forEach((k) => { o[k] = +r[k] || 0; }); NUMS_EXTRA.forEach((k) => { o[k] = r[k] == null ? (+r.leads_all || 0) : +r[k] || 0; });
     NULLABLE.forEach((k) => { o[k] = r[k] == null || r[k] === '' ? null : +r[k]; });
     return o;
   });
